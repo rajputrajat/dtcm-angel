@@ -1,20 +1,22 @@
 use std::net::{AddrParseError, IpAddr};
+use tokio::process::Command;
 
 use crate::Result;
 
-const URL: &str = "https://myexternalip.com/raw";
-
-/// Returns the public ip address by connecting to https://myexternalip.com/raw
+/// Returns the public ip address
 pub async fn public_ip() -> Result<IpAddr> {
-    reqwest::get(URL)
-        .await?
-        .text()
-        .await?
-        .parse()
-        .map_err(|e: AddrParseError| {
-            error!("Failed to get public IP: {:?}", e);
-            e.into()
-        })
+    String::from_utf8(
+        Command::new("curl")
+            .arg("ifconfig.me/ip")
+            .output()
+            .await?
+            .stdout,
+    )?
+    .parse()
+    .map_err(|e: AddrParseError| {
+        error!("Failed to get public IP: {:?}", e);
+        e.into()
+    })
 }
 
 #[cfg(test)]
