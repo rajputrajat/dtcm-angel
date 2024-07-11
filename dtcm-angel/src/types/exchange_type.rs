@@ -1,5 +1,6 @@
 /// Exchange Type
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Clone, Copy)]
+#[non_exhaustive]
 pub enum ExchangeType {
     /// BSE Equity
     BSE,
@@ -13,6 +14,10 @@ pub enum ExchangeType {
     BFO,
     /// Currency Derivate Segment
     CDS,
+    /// National Commodity and Derivatives Exchange
+    NCDEX,
+    /// not sure what NCO is, but it's part of instruments
+    NCO,
 }
 
 impl Default for ExchangeType {
