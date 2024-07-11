@@ -4,6 +4,7 @@ use tokio::process::Command;
 use crate::Result;
 
 /// Returns the public ip address
+/// Error: multiple cases
 pub async fn public_ip() -> Result<IpAddr> {
     String::from_utf8(
         Command::new("curl")

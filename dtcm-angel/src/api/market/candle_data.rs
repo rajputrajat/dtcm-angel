@@ -27,7 +27,7 @@ pub struct CandleDataReq {
 
 /// Candle data response
 #[derive(Debug, Deserialize)]
-pub struct CandleDataRes(Vec<(String, f64, f64, f64, f64, usize)>);
+pub struct CandleDataRes(pub Vec<(String, f64, f64, f64, f64, usize)>);
 
 impl CandleDataReq {
     /// Returns a new instance for the candle data

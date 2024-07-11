@@ -24,7 +24,7 @@ pub struct SearchScrip {
 
 /// Searched scrip
 #[derive(Debug, Deserialize)]
-pub struct SearchScripRes(Vec<SearchScrip>);
+pub struct SearchScripRes(pub Vec<SearchScrip>);
 
 impl SearchScripReq {
     /// Returns a new instance for the search scrip request
