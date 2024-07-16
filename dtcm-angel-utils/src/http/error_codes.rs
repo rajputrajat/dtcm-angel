@@ -75,10 +75,10 @@ pub enum ErrorCodesError {
 }
 
 /// error codes
-#[derive(Debug, Clone)]
-pub struct ErrorCodes(pub Option<ErrorCode>);
+#[derive(Debug, Clone, Deserialize)]
+pub struct ErrorCodeOpt(pub Option<ErrorCode>);
 
-impl FromStr for ErrorCodes {
+impl FromStr for ErrorCodeOpt {
     type Err = ErrorCodesError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
