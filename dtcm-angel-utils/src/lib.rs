@@ -15,9 +15,7 @@ extern crate log;
 extern crate serde;
 
 use mac_address::MacAddressError;
-use std::{
-    error::Error as ErrorI, io, net::AddrParseError, string::FromUtf8Error, time::SystemTimeError,
-};
+use std::{io, net::AddrParseError, string::FromUtf8Error, time::SystemTimeError};
 use thiserror::Error as ThisError;
 use tokio_tungstenite::tungstenite::http::header::InvalidHeaderValue;
 use totp_rs::{SecretParseError, TotpUrlError};
@@ -37,15 +35,18 @@ pub enum UtilsError {
     /// chrono parser failed
     #[error(transparent)]
     ChronoParseError(#[from] chrono::ParseError),
-    /// public ip error
-    #[error(transparent)]
-    PublicIpError(#[from] Box<dyn ErrorI>),
     /// from reqwest
     #[error(transparent)]
     ReqwestError(#[from] reqwest::Error),
     /// server rejected the request
     #[error("failed request from server")]
     FailedRequest(String),
+    /// rate limit exceeded
+    #[error("rate limit exceeded")]
+    RateLimitExceeded,
+    /// invalid status-code
+    #[error("invalid status code: {0}")]
+    InvalidStatusCode(u16),
     /// public ip count not be determined
     #[error(transparent)]
     IoError(#[from] io::Error),
