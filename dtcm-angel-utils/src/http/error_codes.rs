@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 use std::str::FromStr;
 use thiserror::Error as ThisError;
 
@@ -75,7 +75,7 @@ pub enum ErrorCodesError {
 }
 
 /// error codes
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone)]
 pub struct ErrorCodeOpt(pub Option<ErrorCode>);
 
 impl FromStr for ErrorCodeOpt {
@@ -115,4 +115,12 @@ impl FromStr for ErrorCodeOpt {
             e => Err(ErrorCodesError::InvalidErrorCode(e.to_owned())),
         }
     }
+}
+
+pub fn deserialize_error_code<'de, D>(deserializer: D) -> Result<ErrorCodeOpt, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = String::deserialize(deserializer)?;
+    Ok(value.parse().unwrap())
 }

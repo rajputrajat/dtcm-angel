@@ -1,4 +1,4 @@
-use super::error_codes::ErrorCode;
+use super::error_codes::{deserialize_error_code, ErrorCodeOpt};
 use crate::{Result, UtilsError};
 
 /// Placeholder for response received from API calls
@@ -10,7 +10,8 @@ pub struct Response<T> {
     pub message: String,
     /// Error code in case of any error
     #[serde(rename = "errorcode")]
-    pub error_code: Option<ErrorCode>,
+    #[serde(deserialize_with = "deserialize_error_code")]
+    pub error_code: ErrorCodeOpt,
     /// Data returned by the API
     pub data: Option<T>,
 }
