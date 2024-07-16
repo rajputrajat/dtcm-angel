@@ -4,6 +4,9 @@ pub use response::Response;
 mod header;
 pub use header::HttpHeader;
 
+mod error_codes;
+pub use error_codes::*;
+
 mod client;
 pub use client::HttpClient;
 

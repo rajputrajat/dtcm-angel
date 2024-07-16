@@ -1,5 +1,7 @@
 use crate::Result;
 
+use super::ErrorCode;
+
 /// Placeholder for response received from API calls
 #[derive(Debug, Deserialize)]
 pub struct Response<T> {
@@ -9,7 +11,7 @@ pub struct Response<T> {
     pub message: String,
     /// Error code in case of any error
     #[serde(rename = "errorcode")]
-    pub error_code: String,
+    pub error_code: ErrorCode,
     /// Data returned by the API
     pub data: Option<T>,
 }
