@@ -5,7 +5,7 @@ mod header;
 pub use header::HttpHeader;
 
 mod error_codes;
-pub use error_codes::*;
+pub use error_codes::ErrorCode;
 
 mod client;
 pub use client::HttpClient;

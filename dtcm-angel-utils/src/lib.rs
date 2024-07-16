@@ -14,12 +14,13 @@ extern crate log;
 #[macro_use]
 extern crate serde;
 
-/// Type alias for Result
-/// Type alias for error
-pub type Error = Box<dyn std::error::Error>;
-
-/// Type alias for result
-pub type Result<T> = std::result::Result<T, Error>;
+use mac_address::MacAddressError;
+use std::{
+    error::Error as ErrorI, io, net::AddrParseError, string::FromUtf8Error, time::SystemTimeError,
+};
+use thiserror::Error as ThisError;
+use tokio_tungstenite::tungstenite::http::header::InvalidHeaderValue;
+use totp_rs::{SecretParseError, TotpUrlError};
 
 /// Contains date related functionality
 pub mod date;
@@ -29,3 +30,68 @@ pub mod http;
 pub mod sys;
 /// Contains websocket related functionality
 pub mod ws;
+
+/// the Error type from utils
+#[derive(Debug, ThisError)]
+pub enum UtilsError {
+    /// chrono parser failed
+    #[error(transparent)]
+    ChronoParseError(#[from] chrono::ParseError),
+    /// public ip error
+    #[error(transparent)]
+    PublicIpError(#[from] Box<dyn ErrorI>),
+    /// from reqwest
+    #[error(transparent)]
+    ReqwestError(#[from] reqwest::Error),
+    /// server rejected the request
+    #[error("failed request from server")]
+    FailedRequest(String),
+    /// public ip count not be determined
+    #[error(transparent)]
+    IoError(#[from] io::Error),
+    /// address parsing failed
+    #[error(transparent)]
+    AddrParsingFailed(#[from] AddrParseError),
+    /// text parsing failed
+    #[error(transparent)]
+    Utf8ParsingFailed(#[from] FromUtf8Error),
+    /// missing data in the api response
+    #[error("missing data in API response")]
+    MissingData,
+    /// secret parse error
+    #[error(transparent)]
+    SecretParseFailed(#[from] SecretParseError),
+    /// totp url error
+    #[error(transparent)]
+    TotpUrlError(#[from] TotpUrlError),
+    /// system time error
+    #[error(transparent)]
+    SystemTimeError(#[from] SystemTimeError),
+    /// local ip error
+    #[error(transparent)]
+    LocalIpError(#[from] local_ip_address::Error),
+    /// mac address error
+    #[error(transparent)]
+    MacAddressError(#[from] MacAddressError),
+    /// mac address error
+    #[error("empty mac-address")]
+    MacAddressNone,
+    /// error from tungsnite crate
+    #[error(transparent)]
+    Tungstenite(#[from] tokio_tungstenite::tungstenite::Error),
+    /// error from tungsnite crate
+    #[error("tunstenite: close frame requested")]
+    TungsteniteCloseFrameError,
+    /// serde failed
+    #[error(transparent)]
+    Serde(#[from] serde_json::Error),
+    /// invalid header
+    #[error(transparent)]
+    InvalidHeader(#[from] InvalidHeaderValue),
+    /// best 5 data failed   
+    #[error("Invalid best five data flag")]
+    InvalidBestFiveData,
+}
+
+/// custom result type for crate
+pub type Result<T> = std::result::Result<T, UtilsError>;

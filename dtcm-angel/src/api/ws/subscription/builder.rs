@@ -1,4 +1,4 @@
-use dtcm_angel_utils::Result;
+use crate::{Error, Result};
 
 use super::{
     types::SubscriptionMode, SubscriptionAction, SubscriptionExchange, SubscriptionParam,
@@ -82,11 +82,11 @@ impl SubscriptionBuilder {
         let param = self.param;
 
         if param.token_list.is_empty() {
-            return Err("Params required for the subscription request".into());
+            return Err(Error::InvalidSubscriptionRequestParamsRequired);
         }
 
         if param.token_list.iter().any(|tl| tl.tokens.is_empty()) {
-            return Err("Token required for the token list".into());
+            return Err(Error::InvalidSubscriptionRequestTokenRequired);
         }
 
         let req = SubscriptionRequest {

@@ -1,9 +1,8 @@
 use reqwest::{redirect::Policy, Client, ClientBuilder, IntoUrl, Method};
 use serde::{de::DeserializeOwned, Serialize};
 
-use crate::Result;
-
 use super::{EndPoint, HttpHeader, Response};
+use crate::{Result, UtilsError as Error};
 
 /// Placeholder for the Http client
 #[derive(Debug)]
@@ -78,14 +77,13 @@ impl HttpClient {
 
         if !res.status {
             error!("{method} request to {ep} failed: {}", res.message);
-            return Err(res.message.into());
+            return Err(Error::FailedRequest(res.message));
         }
 
         debug!("{method} request to {ep} completed");
 
         Ok(res)
     }
-
     /// Makes the get request
     pub async fn get_json_url<U, R>(url: U) -> Result<R>
     where

@@ -42,5 +42,6 @@ impl CancelOrderReq {
         http.post(EndPoint::OrderModify, self)
             .await
             .and_then(|res| res.into_data())
+            .map_err(|e| e.into())
     }
 }

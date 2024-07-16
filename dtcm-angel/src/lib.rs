@@ -11,7 +11,7 @@ extern crate dtcm_angel_derive;
 #[macro_use]
 extern crate serde;
 
-pub use dtcm_angel_utils::Result;
+use thiserror::Error as ThisError;
 
 mod smart_connect;
 pub use smart_connect::SmartConnect;
@@ -24,3 +24,32 @@ pub mod types;
 
 #[cfg(test)]
 pub mod test_util;
+
+/// the Error type from utils
+#[derive(Debug, ThisError)]
+pub enum Error {
+    /// errors from utils crate
+    #[error(transparent)]
+    UtilsError(#[from] dtcm_angel_utils::UtilsError),
+    /// session not established
+    #[error("unable to establish the session")]
+    SessionEstablishmentError,
+    /// subscription error
+    #[error("Params required for the subscription request")]
+    InvalidSubscriptionRequestParamsRequired,
+    /// token required
+    #[error("Token required for the token list")]
+    InvalidSubscriptionRequestTokenRequired,
+    /// invalid subscription exchange
+    #[error("Invalid Subscription Exchange")]
+    InvalidSubscriptionExchange,
+    /// invalid subscription mode
+    #[error("Invalid Subscription mode")]
+    InvalidSubscriptionMode,
+    /// interval error
+    #[error("{0}")]
+    IntervalError(String),
+}
+
+/// custom result type for crate
+pub type Result<T> = std::result::Result<T, Error>;

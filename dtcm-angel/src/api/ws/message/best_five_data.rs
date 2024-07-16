@@ -1,4 +1,4 @@
-use dtcm_angel_utils::Error;
+use dtcm_angel_utils::UtilsError as Error;
 use serde_repr::Deserialize_repr;
 
 /// Buy/Sell Flag
@@ -28,7 +28,7 @@ impl TryFrom<i16> for Flag {
         let _self = match value {
             0 => Self::Sell,
             1 => Self::Buy,
-            _ => return Err("Invalid best five data flag".into()),
+            _ => return Err(Error::InvalidBestFiveData),
         };
         Ok(_self)
     }

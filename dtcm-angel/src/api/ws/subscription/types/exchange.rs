@@ -1,4 +1,4 @@
-use dtcm_angel_utils::Error;
+use crate::Error;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 /// Exchange type for subscription
@@ -39,7 +39,7 @@ impl TryFrom<u8> for SubscriptionExchange {
             5 => Self::MCXFO,
             7 => Self::NCXFO,
             13 => Self::CDEFO,
-            _ => return Err("Invalid Subscription Exchange".into()),
+            _ => return Err(Error::InvalidSubscriptionExchange),
         };
         Ok(_self)
     }

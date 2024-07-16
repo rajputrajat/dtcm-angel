@@ -10,7 +10,7 @@ where
     debug!("Fetching current OTP");
     let secret = Secret::Encoded(otp_token.into());
 
-    let secret_bytes = secret.to_bytes().map_err(|e| e.to_string())?;
+    let secret_bytes = secret.to_bytes()?;
 
     let totp = TOTP::new(Algorithm::SHA1, 6, 1, 30, secret_bytes)?;
 

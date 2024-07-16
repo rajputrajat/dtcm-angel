@@ -1,6 +1,6 @@
-use std::{collections::HashMap, fmt::Display};
-
 use dtcm_angel_utils::http::{HttpClient, HttpFetcher, HttpSender, INSTRUMENT_URL};
+use log::error;
+use std::{collections::HashMap, fmt::Display};
 
 use crate::{
     funds::{MarginCalculatorPosition, MarginCalculatorReq, MarginCalculatorRes, Rms},
@@ -22,7 +22,7 @@ use crate::{
         RuleType, TransactionType,
     },
     user::{LogoutReq, Profile, SessionReq, SessionRes, TokenReq},
-    Result,
+    Error, Result,
 };
 
 /// Smart connect client to interact with Angel One API
@@ -66,7 +66,7 @@ impl SmartConnect {
 
     /// Returns the available instruments
     pub async fn instruments() -> Result<Vec<Instrument>> {
-        HttpClient::get_json_url(INSTRUMENT_URL).await
+        Ok(HttpClient::get_json_url(INSTRUMENT_URL).await?)
     }
 
     /// Generates the session to receive authentication tokens and user information
@@ -86,9 +86,10 @@ impl SmartConnect {
 
     /// Returns reference to the session already established by call to generate_session
     pub fn session(&self) -> Result<&SessionRes> {
-        self.session
-            .as_ref()
-            .ok_or("Session not established".into())
+        self.session.as_ref().ok_or_else(|| {
+            error!("Session not established");
+            Error::SessionEstablishmentError
+        })
     }
 
     /// Returns the current refresh token
@@ -104,18 +105,18 @@ impl SmartConnect {
     /// Regenerates the authentication tokens using the existing refresh token
     pub async fn token(&self) -> Result<SessionRes> {
         let token_req = TokenReq::new(self.current_refresh_token()?);
-        token_req.send_data(&self.http).await
+        Ok(token_req.send_data(&self.http).await?)
     }
 
     /// Fetch the complete information of the user who is logged in
     pub async fn profile(&self) -> Result<Profile> {
         let body = HashMap::from([("refreshToken", self.current_refresh_token()?)]);
-        Profile::fetch_data(&self.http, body).await
+        Ok(Profile::fetch_data(&self.http, body).await?)
     }
 
     /// Returns fund, cash and margin information of the user for equity and commodity segments
     pub async fn rms_limit(&self) -> Result<Rms> {
-        Rms::fetch_data(&self.http, &{}).await
+        Ok(Rms::fetch_data(&self.http, &{}).await?)
     }
 
     /// API session is destroyed by this call and it invalidates the jwt_token
@@ -139,7 +140,7 @@ impl SmartConnect {
 
     /// Sends the create rule request
     pub async fn create_rule(&self, create_rule_req: &CreateRuleReq) -> Result<CreateRuleRes> {
-        create_rule_req.send_data(&self.http).await
+        Ok(create_rule_req.send_data(&self.http).await?)
     }
 
     /// Returns a new modify rule instance to be configured
@@ -153,7 +154,7 @@ impl SmartConnect {
 
     /// Sends the modify rule request
     pub async fn modify_rule(&self, modify_rule_req: &ModifyRuleReq) -> Result<ModifyRuleRes> {
-        modify_rule_req.send_data(&self.http).await
+        Ok(modify_rule_req.send_data(&self.http).await?)
     }
 
     /// Returns a new cancel rule instance to be configured
@@ -167,7 +168,7 @@ impl SmartConnect {
 
     /// Sends the cancel rule request
     pub async fn cancel_rule(&self, cancel_rule_req: &CancelRuleReq) -> Result<CancelRuleRes> {
-        cancel_rule_req.send_data(&self.http).await
+        Ok(cancel_rule_req.send_data(&self.http).await?)
     }
 
     /// Returns a new detail rule instance to be configured
@@ -181,7 +182,7 @@ impl SmartConnect {
 
     /// Sends the detail rule request
     pub async fn rule_detail(&self, rule_detail_req: &RuleDetailReq) -> Result<RuleDetailRes> {
-        rule_detail_req.send_data(&self.http).await
+        Ok(rule_detail_req.send_data(&self.http).await?)
     }
 
     /// Returns a new list rule instance to be configured
@@ -191,7 +192,7 @@ impl SmartConnect {
 
     /// Sends the list rule request
     pub async fn rule_list(&self, rule_list_req: &RuleListReq) -> Result<RuleListRes> {
-        rule_list_req.send_data(&self.http).await
+        Ok(rule_list_req.send_data(&self.http).await?)
     }
 
     /// Returns a new place order instance to be configured
@@ -209,7 +210,7 @@ impl SmartConnect {
 
     /// Places the configured order
     pub async fn place_order(&self, order_req: &PlaceOrderReq) -> Result<PlaceOrderRes> {
-        order_req.send_data(&self.http).await
+        Ok(order_req.send_data(&self.http).await?)
     }
 
     /// Returns a new modify order instance to be further configured by the caller
@@ -246,7 +247,7 @@ impl SmartConnect {
 
     /// Fetches the order book
     pub async fn order_book(&self) -> Result<Vec<OrderBook>> {
-        OrderBook::fetch_vec(&self.http, &{}).await
+        Ok(OrderBook::fetch_vec(&self.http, &{}).await?)
     }
 
     /// Fetches the order status by its id
@@ -254,12 +255,12 @@ impl SmartConnect {
     where
         O: Into<String>,
     {
-        IndividualOrderStatus::fetch_data(&self.http, unique_order_id).await
+        Ok(IndividualOrderStatus::fetch_data(&self.http, unique_order_id).await?)
     }
 
     /// Fetches the trade book
     pub async fn trade_book(&self) -> Result<Vec<TradeBook>> {
-        TradeBook::fetch_vec(&self.http, &{}).await
+        Ok(TradeBook::fetch_vec(&self.http, &{}).await?)
     }
 
     /// Returns a new instance for LTP data request
@@ -277,22 +278,22 @@ impl SmartConnect {
 
     /// Sends the LTP data request
     pub async fn ltp_data(&self, ltp_data_req: &LtpDataReq) -> Result<LtpDataRes> {
-        ltp_data_req.send_data(&self.http).await
+        Ok(ltp_data_req.send_data(&self.http).await?)
     }
 
     /// Returns current portfolio holdings
     pub async fn holdings(&self) -> Result<Vec<Holding>> {
-        Holding::fetch_vec(&self.http, &{}).await
+        Ok(Holding::fetch_vec(&self.http, &{}).await?)
     }
 
     /// Returns all the portfolio holdings
     pub async fn all_holdings(&self) -> Result<AllHoldings> {
-        AllHoldings::fetch_data(&self.http, &{}).await
+        Ok(AllHoldings::fetch_data(&self.http, &{}).await?)
     }
 
     /// Returns the portfolio position holdings
     pub async fn positions(&self) -> Result<Vec<Position>> {
-        Position::fetch_vec(&self.http, &{}).await
+        Ok(Position::fetch_vec(&self.http, &{}).await?)
     }
 
     /// Returns a new instance for convert position request
@@ -305,7 +306,7 @@ impl SmartConnect {
 
     /// Sends the convert position request
     pub async fn convert_position(&self, convert_position_req: &ConvertPositionReq) -> Result<()> {
-        convert_position_req.send_data(&self.http).await
+        Ok(convert_position_req.send_data(&self.http).await?)
     }
 
     /// Returns a new instance for Market data request
@@ -319,7 +320,7 @@ where {
 
     /// Sends the Market data request
     pub async fn market_data(&self, market_data_req: &MarketDataReq) -> Result<MarketDataRes> {
-        market_data_req.send_data(&self.http).await
+        Ok(market_data_req.send_data(&self.http).await?)
     }
 
     /// Returns a new instance for Candle data request
@@ -340,7 +341,7 @@ where {
 
     /// Sends the Candle data request
     pub async fn candle_data(&self, candle_data_req: &CandleDataReq) -> Result<CandleDataRes> {
-        candle_data_req.send_data(&self.http).await
+        Ok(candle_data_req.send_data(&self.http).await?)
     }
 
     /// Searches the scrip
@@ -349,7 +350,7 @@ where {
         S: Into<String>,
     {
         let req = SearchScripReq::new(exchange, scrip);
-        req.send_data(&self.http).await
+        Ok(req.send_data(&self.http).await?)
     }
 
     /// Returns a new margin position to calculate the margin
@@ -382,6 +383,6 @@ where {
     {
         let mut margin_calc_req = MarginCalculatorReq::new();
         margin_calc_req.add_positions(positions);
-        margin_calc_req.send_data(&self.http).await
+        Ok(margin_calc_req.send_data(&self.http).await?)
     }
 }

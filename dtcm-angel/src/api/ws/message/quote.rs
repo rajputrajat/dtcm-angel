@@ -1,7 +1,7 @@
 use std::io::Cursor;
 
 use byteorder::{ReadBytesExt, LE};
-use dtcm_angel_utils::Error;
+use dtcm_angel_utils::UtilsError as Error;
 
 /// Response for quote subscription request
 #[derive(Debug, Deserialize)]

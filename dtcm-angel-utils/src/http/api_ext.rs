@@ -22,7 +22,7 @@ pub trait HttpFetcher: Api {
         B: serde::Serialize + Send + Sync,
         Self: DeserializeOwned + std::fmt::Debug,
     {
-        http.get(Self::end_point(), &body).await
+        Ok(http.get(Self::end_point(), &body).await?)
     }
 
     /// Returns the fetched data
@@ -33,7 +33,7 @@ pub trait HttpFetcher: Api {
     {
         Self::fetch(http, body)
             .await
-            .and_then(|res| res.into_data())
+            .and_then(|res| Ok(res.into_data()?))
     }
 
     /// Returns the fetched vector of data
@@ -42,9 +42,10 @@ pub trait HttpFetcher: Api {
         B: serde::Serialize + Send + Sync,
         Self: DeserializeOwned + std::fmt::Debug,
     {
-        http.get(Self::end_point(), &body)
+        Ok(http
+            .get(Self::end_point(), &body)
             .await
-            .map(|res| res.into_vec())
+            .map(|res| res.into_vec())?)
     }
 }
 
@@ -57,7 +58,7 @@ pub trait HttpSender: Api {
         R: DeserializeOwned + std::fmt::Debug,
         Self: serde::Serialize + std::fmt::Debug,
     {
-        http.post(Self::end_point(), self).await
+        Ok(http.post(Self::end_point(), self).await?)
     }
 
     /// Sends the data in body to the API and returns the received data
@@ -66,7 +67,9 @@ pub trait HttpSender: Api {
         R: DeserializeOwned + std::fmt::Debug,
         Self: serde::Serialize + std::fmt::Debug,
     {
-        self.send::<R>(http).await.and_then(|res| res.into_data())
+        self.send::<R>(http)
+            .await
+            .and_then(|res| Ok(res.into_data()?))
     }
 
     /// Sends the data in body to the API and returns the received vector
@@ -77,6 +80,6 @@ pub trait HttpSender: Api {
     {
         self.send::<Vec<R>>(http)
             .await
-            .and_then(|res| res.into_data())
+            .and_then(|res| Ok(res.into_data()?))
     }
 }

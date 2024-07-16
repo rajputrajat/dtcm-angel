@@ -1,6 +1,5 @@
-use std::fmt::Display;
-
 use reqwest::header::{self, HeaderMap};
+use std::fmt::Display;
 
 use crate::{
     sys::{local_ip, mac_addr, public_ip},

@@ -1,7 +1,7 @@
 use std::io::Cursor;
 
 use byteorder::{ReadBytesExt, LE};
-use dtcm_angel_utils::Error;
+use dtcm_angel_utils::UtilsError as Error;
 
 use super::{best_five_data::Flag, BestFiveData};
 

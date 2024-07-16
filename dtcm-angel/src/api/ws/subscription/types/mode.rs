@@ -1,4 +1,4 @@
-use dtcm_angel_utils::Error;
+use crate::Error;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 /// Exchange type for subscription
@@ -27,7 +27,7 @@ impl TryFrom<u8> for SubscriptionMode {
             1 => Self::Ltp,
             2 => Self::Quote,
             3 => Self::SnapQuote,
-            _ => return Err("Invalid Subscription Mode".into()),
+            _ => return Err(Error::InvalidSubscriptionMode),
         };
         Ok(_self)
     }

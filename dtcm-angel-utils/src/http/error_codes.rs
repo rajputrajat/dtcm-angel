@@ -66,20 +66,20 @@ pub enum ErrorCode {
     AB2002,
 }
 
-#[derive(Debug, ThisError)]
 /// the error
-pub enum Error {
+#[derive(Debug, ThisError)]
+pub enum ErrorCodesError {
     #[error("invalid error code")]
     /// invalid error
     InvalidErrorCode(String),
 }
 
-#[derive(Debug, Clone)]
 /// error codes
+#[derive(Debug, Clone)]
 pub struct ErrorCodes(pub Option<ErrorCode>);
 
 impl FromStr for ErrorCodes {
-    type Err = Error;
+    type Err = ErrorCodesError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "AG8001" => Ok(Self(Some(ErrorCode::AG8001))),
@@ -112,7 +112,7 @@ impl FromStr for ErrorCodes {
             "AB1031" => Ok(Self(Some(ErrorCode::AB1031))),
             "AB1032" => Ok(Self(Some(ErrorCode::AB1032))),
             "" => Ok(Self(None)),
-            e => Err(Error::InvalidErrorCode(e.to_owned())),
+            e => Err(ErrorCodesError::InvalidErrorCode(e.to_owned())),
         }
     }
 }

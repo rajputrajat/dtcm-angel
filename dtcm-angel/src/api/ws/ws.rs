@@ -1,6 +1,6 @@
 use dtcm_angel_utils::{
     ws::{IntoClientRequest, Request, WsStream},
-    Error,
+    UtilsError,
 };
 use serde::de::DeserializeOwned;
 
@@ -33,13 +33,21 @@ impl AngelOneWs {
 
     /// Prepares the websocket request with the required headers
     fn request(&self) -> Result<Request> {
-        let mut request = ANGEL_WS_URL.into_client_request()?;
+        let mut request = ANGEL_WS_URL
+            .into_client_request()
+            .map_err(|e| UtilsError::Tungstenite(e))?;
         let headers = request.headers_mut();
 
-        let client_code = self.client_code.parse()?;
+        let client_code = self
+            .client_code
+            .parse()
+            .map_err(|e| UtilsError::InvalidHeader(e))?;
         headers.insert("x-client-code", client_code);
 
-        let feed_token = self.feed_token.parse()?;
+        let feed_token = self
+            .feed_token
+            .parse()
+            .map_err(|e| UtilsError::InvalidHeader(e))?;
         headers.insert("x-feed-token", feed_token);
 
         Ok(request)
@@ -48,8 +56,8 @@ impl AngelOneWs {
     /// Returns the websocket stream
     pub async fn stream<M>(&self) -> Result<WsStream<M>>
     where
-        M: TryFrom<Vec<u8>, Error = Error> + DeserializeOwned,
+        M: TryFrom<Vec<u8>, Error = UtilsError> + DeserializeOwned,
     {
-        WsStream::connect(self.request()?).await
+        Ok(WsStream::connect(self.request()?).await?)
     }
 }

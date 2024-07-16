@@ -16,10 +16,7 @@ use tokio_tungstenite::{
     MaybeTlsStream,
 };
 
-use crate::Error;
-
-/// Type alias for result
-type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+use crate::{Result, UtilsError as Error};
 
 /// Type alias for WebSocketStream
 type WebSocket = tokio_tungstenite::WebSocketStream<MaybeTlsStream<TcpStream>>;
@@ -85,7 +82,7 @@ where
         Some(serde_json::from_str(&payload).map_err(|e| {
             let msg = format!("Failed to decode websocket text message with error {e}");
             error!("{msg}");
-            msg.into()
+            e.into()
         }))
     }
 
@@ -95,7 +92,7 @@ where
         Some(M::try_from(payload).map_err(|e| {
             let msg = format!("Failed to decode websocket binary message  with error {e}",);
             error!("{msg}");
-            msg.into()
+            e.into()
         }))
     }
 
@@ -115,7 +112,7 @@ where
     fn process_close_frame(close_frame: Option<CloseFrame>) -> Option<Result<M>> {
         let msg = format!("CloseFrame request from websocket {:?}", close_frame);
         trace!("{msg}");
-        Some(Err(msg.into()))
+        Some(Err(Error::TungsteniteCloseFrameError))
     }
 
     /// Frame message from [`WebSocket`]. Event logged at `trace` level.

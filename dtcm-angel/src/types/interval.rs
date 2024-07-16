@@ -1,5 +1,7 @@
 use chrono::NaiveDateTime;
 
+use crate::Error;
+
 /// Interval
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Interval {
@@ -45,12 +47,11 @@ impl Interval {
     pub fn valid(&self, from_date: NaiveDateTime, to_date: NaiveDateTime) -> crate::Result<()> {
         let days = (to_date - from_date).num_days();
         if days > self.limit() {
-            return Err(format!(
+            return Err(Error::IntervalError(format!(
                 "Only {} days allowed for {:?} only interval",
                 self.limit(),
                 self
-            )
-            .into());
+            )));
         }
 
         Ok(())
