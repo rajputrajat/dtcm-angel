@@ -63,18 +63,20 @@ impl HttpClient {
             Some(token) => request.bearer_auth(token),
             None => request,
         };
+        trace!("request: {request:?}");
 
         let req_res = request.send().await.map_err(|e| {
             error!("{method} request to {ep} failed: {e}");
             e
         })?;
+        trace!("response: {req_res:?}");
 
         let res: Response<R> = req_res.json().await.map_err(|e| {
-            error!("{ep} {e}");
+            error!("endpoint: {ep}, error: {e}");
             e
         })?;
 
-        if res.status == false {
+        if !res.status {
             error!("{method} request to {ep} failed: {}", res.message);
             return Err(res.message.into());
         }

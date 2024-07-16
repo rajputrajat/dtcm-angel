@@ -17,13 +17,15 @@ pub struct Response<T> {
 impl<T> Response<T> {
     /// Returns data from response
     pub fn into_data(self) -> Result<T> {
-        self.data.ok_or("Missing data in API response".into())
+        self.data
+            .ok_or_else(|| "Missing data in API response".into())
     }
 }
 
 impl<T> Response<Vec<T>> {
     /// Returns vector from response
+    #[must_use]
     pub fn into_vec(self) -> Vec<T> {
-        self.data.unwrap_or(vec![])
+        self.data.unwrap_or_default()
     }
 }
