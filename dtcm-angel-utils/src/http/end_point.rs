@@ -45,10 +45,13 @@ pub enum EndPoint {
 
     CandleData,
     MarketData,
-    SearchScrip,
     AllHolding,
     IndividualOrderDetails(String),
     MarginApi,
+
+    SearchScrip,
+    NseIntraday,
+    BseIntraday,
 }
 
 impl EndPoint {
@@ -61,11 +64,13 @@ impl EndPoint {
     }
 
     /// Returns the url for the endpoint
+    #[must_use]
     pub fn url(&self) -> String {
         format!("{ROOT_URL}{self}")
     }
 
     /// Returns the url for the websocket
+    #[must_use]
     pub fn ws() -> String {
         String::from(WS_URL)
     }
@@ -76,8 +81,7 @@ impl Display for EndPoint {
         match self {
             Login => write!(f, "/rest/auth/angelbroking/user/v1/loginByPassword"),
             Logout => write!(f, "/rest/secure/angelbroking/user/v1/logout"),
-            Token => write!(f, "/rest/auth/angelbroking/jwt/v1/generateTokens"),
-            Refresh => write!(f, "/rest/auth/angelbroking/jwt/v1/generateTokens"),
+            Token | Refresh => write!(f, "/rest/auth/angelbroking/jwt/v1/generateTokens"),
             UserProfile => write!(f, "/rest/secure/angelbroking/user/v1/getProfile"),
 
             OrderPlace => write!(f, "/rest/secure/angelbroking/order/v1/placeOrder"),
@@ -100,8 +104,11 @@ impl Display for EndPoint {
 
             CandleData => write!(f, "/rest/secure/angelbroking/historical/v1/getCandleData"),
             MarketData => write!(f, "/rest/secure/angelbroking/market/v1/quote/"),
-            SearchScrip => write!(f, "/rest/secure/angelbroking/order/v1/searchScrip"),
             AllHolding => write!(f, "/rest/secure/angelbroking/portfolio/v1/getAllHolding"),
+
+            SearchScrip => write!(f, "/rest/secure/angelbroking/order/v1/searchScrip"),
+            NseIntraday => write!(f, "/rest/secure/angelbroking/marketData/v1/nseIntraday"),
+            BseIntraday => write!(f, "/rest/secure/angelbroking/marketData/v1/bseIntraday"),
 
             IndividualOrderDetails(order_id) => {
                 write!(f, "/rest/secure/angelbroking/order/v1/details/{order_id}")

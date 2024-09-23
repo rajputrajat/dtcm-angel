@@ -3,6 +3,8 @@ use serde::de::DeserializeOwned;
 
 use crate::Result;
 
+use super::Response;
+
 /// Implementation to return endpoint and url
 pub trait Api {
     /// Returns the endpoint for the implemented object
@@ -31,9 +33,7 @@ pub trait HttpFetcher: Api {
         B: serde::Serialize + Send + Sync,
         Self: DeserializeOwned + std::fmt::Debug,
     {
-        Self::fetch(http, body)
-            .await
-            .and_then(|res| Ok(res.into_data()?))
+        Self::fetch(http, body).await.and_then(Response::into_data)
     }
 
     /// Returns the fetched vector of data
@@ -45,7 +45,7 @@ pub trait HttpFetcher: Api {
         Ok(http
             .get(Self::end_point(), &body)
             .await
-            .map(|res| res.into_vec())?)
+            .map(Response::into_vec)?)
     }
 }
 
@@ -67,9 +67,7 @@ pub trait HttpSender: Api {
         R: DeserializeOwned + std::fmt::Debug,
         Self: serde::Serialize + std::fmt::Debug,
     {
-        self.send::<R>(http)
-            .await
-            .and_then(|res| Ok(res.into_data()?))
+        self.send::<R>(http).await.and_then(Response::into_data)
     }
 
     /// Sends the data in body to the API and returns the received vector
@@ -80,6 +78,6 @@ pub trait HttpSender: Api {
     {
         self.send::<Vec<R>>(http)
             .await
-            .and_then(|res| Ok(res.into_data()?))
+            .and_then(Response::into_data)
     }
 }

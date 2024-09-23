@@ -1,4 +1,4 @@
-use reqwest::{redirect::Policy, Client, ClientBuilder, IntoUrl, Method};
+use reqwest::{redirect::Policy, Client, ClientBuilder, IntoUrl, Method, StatusCode};
 use serde::{de::DeserializeOwned, Serialize};
 
 use super::{EndPoint, HttpHeader, Response};
@@ -69,6 +69,13 @@ impl HttpClient {
             e
         })?;
         trace!("response: {req_res:?}");
+
+        if req_res.status()
+            == StatusCode::from_u16(403)
+                .map_err(|_e| Error::InvalidStatusCode(req_res.status().as_u16()))?
+        {
+            return Err(Error::RateLimitExceeded);
+        }
 
         let res: Response<R> = req_res.json().await.map_err(|e| {
             error!("endpoint: {ep}, error: {e}");

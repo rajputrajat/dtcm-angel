@@ -9,8 +9,9 @@ use crate::{
         RuleDetailReq, RuleDetailRes, RuleListReq, RuleListRes,
     },
     market::{
-        CandleDataReq, CandleDataRes, Instrument, LtpDataReq, LtpDataRes, MarketDataReq,
-        MarketDataRes, SearchScripReq, SearchScripRes,
+        BseIntradayScripReq, CandleDataReq, CandleDataRes, Instrument, IntradayScripsRes,
+        LtpDataReq, LtpDataRes, MarketDataReq, MarketDataRes, NseIntradayScripReq, SearchScripReq,
+        SearchScripRes,
     },
     order::{
         CancelOrderReq, CancelOrderRes, IndividualOrderStatus, ModifyOrderReq, ModifyOrderRes,
@@ -350,6 +351,18 @@ where {
         S: Into<String>,
     {
         let req = SearchScripReq::new(exchange, scrip);
+        Ok(req.send_data(&self.http).await?)
+    }
+
+    /// Nse intraday scrips
+    pub async fn nse_intraday_scrips(&self) -> Result<IntradayScripsRes> {
+        let req = NseIntradayScripReq;
+        Ok(req.send_data(&self.http).await?)
+    }
+
+    /// Bse intraday scrips
+    pub async fn bse_intraday_scrips(&self) -> Result<IntradayScripsRes> {
+        let req = BseIntradayScripReq;
         Ok(req.send_data(&self.http).await?)
     }
 
