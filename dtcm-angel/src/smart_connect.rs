@@ -123,7 +123,11 @@ impl SmartConnect {
     /// API session is destroyed by this call and it invalidates the jwt_token
     pub async fn logout(&mut self) -> Result<()> {
         let logout_req = LogoutReq::new(&self.client_code);
-        logout_req.send_data(&self.http).await?;
+        match logout_req.send_data(&self.http).await {
+            Ok(()) => (),
+            Err(e) if e.to_string().contains("Logout Successfully") => (),
+            Err(e) => return Err(Error::UtilsError(e)),
+        };
         self.session.take();
         self.user.take();
         Ok(())
