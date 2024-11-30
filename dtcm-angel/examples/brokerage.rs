@@ -16,17 +16,28 @@ async fn main() {
 
     let brokerage = sc
         .brokerage(BrokerageReq {
-            orders: vec![BrokeragePerProduct {
-                product_type: ProductType::Delivery,
-                transaction_type: TransactionType::Buy,
-                quantity: 100,
-                price: 100.,
-                exchange: ExchangeType::NSE,
-                symbol_name: "TRENT".to_string(),
-                token: "1964".to_string(),
-            }],
+            orders: vec![
+                BrokeragePerProduct {
+                    product_type: ProductType::Delivery,
+                    transaction_type: TransactionType::Buy,
+                    quantity: 100,
+                    price: 100.,
+                    exchange: ExchangeType::NSE,
+                    symbol_name: "TRENT".to_string(),
+                    token: "1964".to_string(),
+                },
+                BrokeragePerProduct {
+                    product_type: ProductType::Delivery,
+                    transaction_type: TransactionType::Sell,
+                    quantity: 100,
+                    price: 101.,
+                    exchange: ExchangeType::NSE,
+                    symbol_name: "TRENT".to_string(),
+                    token: "1964".to_string(),
+                },
+            ],
         })
         .await
         .unwrap();
-    println!("{:?}", brokerage);
+    println!("{:#?}", brokerage);
 }
