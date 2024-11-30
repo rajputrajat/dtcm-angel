@@ -9,9 +9,9 @@ use crate::{
         RuleDetailReq, RuleDetailRes, RuleListReq, RuleListRes,
     },
     market::{
-        BseIntradayScripReq, CandleDataReq, CandleDataRes, Instrument, IntradayScripsRes,
-        LtpDataReq, LtpDataRes, MarketDataReq, MarketDataRes, NseIntradayScripReq, SearchScripReq,
-        SearchScripRes,
+        BrokerageReq, BrokerageResp, BseIntradayScripReq, CandleDataReq, CandleDataRes, Instrument,
+        IntradayScripsRes, LtpDataReq, LtpDataRes, MarketDataReq, MarketDataRes,
+        NseIntradayScripReq, SearchScripReq, SearchScripRes,
     },
     order::{
         CancelOrderReq, CancelOrderRes, IndividualOrderStatus, ModifyOrderReq, ModifyOrderRes,
@@ -326,6 +326,11 @@ where {
     /// Sends the Market data request
     pub async fn market_data(&self, market_data_req: &MarketDataReq) -> Result<MarketDataRes> {
         Ok(market_data_req.send_data(&self.http).await?)
+    }
+
+    /// get brokerage calculation
+    pub async fn brokerage(&self, brokerage_req: BrokerageReq) -> Result<BrokerageResp> {
+        Ok(brokerage_req.send_data(&self.http).await?)
     }
 
     /// Returns a new instance for Candle data request

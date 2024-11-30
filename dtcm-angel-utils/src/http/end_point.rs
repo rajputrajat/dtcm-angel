@@ -48,6 +48,7 @@ pub enum EndPoint {
     AllHolding,
     IndividualOrderDetails(String),
     MarginApi,
+    Brokerage,
 
     SearchScrip,
     NseIntraday,
@@ -114,6 +115,7 @@ impl Display for EndPoint {
                 write!(f, "/rest/secure/angelbroking/order/v1/details/{order_id}")
             }
             MarginApi => write!(f, "/rest/secure/angelbroking/margin/v1/batch"),
+            Brokerage => write!(f, "/rest/secure/angelbroking/brokerage/v1/estimateCharges"),
         }
     }
 }
