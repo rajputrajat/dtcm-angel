@@ -1,5 +1,5 @@
 use super::error_codes::{deserialize_error_code, ErrorCodeOpt};
-use crate::{Result, UtilsError};
+use crate::{UtilsError, UtilsResult};
 
 /// Placeholder for response received from API calls
 #[derive(Debug, Deserialize)]
@@ -18,7 +18,7 @@ pub struct Response<T> {
 
 impl<T> Response<T> {
     /// Returns data from response
-    pub fn into_data(self) -> Result<T> {
+    pub fn into_data(self) -> UtilsResult<T> {
         self.data.ok_or_else(|| UtilsError::MissingData)
     }
 }

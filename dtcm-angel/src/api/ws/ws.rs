@@ -4,7 +4,7 @@ use dtcm_angel_utils::{
 };
 use serde::de::DeserializeOwned;
 
-use crate::Result;
+use crate::{Error, Result};
 
 // Angel One Websocket URL
 const ANGEL_WS_URL: &str = "ws://smartapisocket.angelone.in/smart-stream";
@@ -56,8 +56,10 @@ impl AngelOneWs {
     /// Returns the websocket stream
     pub async fn stream<M>(&self) -> Result<WsStream<M>>
     where
-        M: TryFrom<Vec<u8>, Error = UtilsError> + DeserializeOwned,
+        M: TryFrom<Vec<u8>, Error = Error> + DeserializeOwned,
     {
-        Ok(WsStream::connect(self.request()?).await?)
+        Ok(WsStream::connect(self.request()?)
+            .await
+            .map_err(|e| Error::UtilsError(e))?)
     }
 }

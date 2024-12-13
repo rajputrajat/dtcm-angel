@@ -1,10 +1,10 @@
-use crate::{Result, UtilsError as Error};
+use crate::{UtilsError, UtilsResult};
 
 /// Returns the mac address for the system
-pub fn mac_addr() -> Result<mac_address::MacAddress> {
+pub fn mac_addr() -> UtilsResult<mac_address::MacAddress> {
     mac_address::get_mac_address()?.ok_or_else(|| {
         error!("none received as mac-address");
-        Error::MacAddressNone
+        UtilsError::MacAddressNone
     })
 }
 

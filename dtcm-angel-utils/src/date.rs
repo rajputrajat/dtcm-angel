@@ -1,10 +1,10 @@
 use chrono::{NaiveDate, NaiveDateTime};
 use serde::{Deserialize, Deserializer, Serializer};
 
-use crate::Result;
+use crate::UtilsResult;
 
 /// Converts yyyy-mm-dd hh:mm e.g. 2001-07-08 00:34 to the NaiveDateTime
-pub fn from_yyyy_mm_dd_hh_mm<D>(date_str: D) -> Result<NaiveDateTime>
+pub fn from_yyyy_mm_dd_hh_mm<D>(date_str: D) -> UtilsResult<NaiveDateTime>
 where
     D: AsRef<str>,
 {

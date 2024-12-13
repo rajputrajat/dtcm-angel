@@ -2,7 +2,7 @@ use reqwest::{redirect::Policy, Client, ClientBuilder, IntoUrl, Method, StatusCo
 use serde::{de::DeserializeOwned, Serialize};
 
 use super::{EndPoint, HttpHeader, Response};
-use crate::{Result, UtilsError as Error};
+use crate::{UtilsError, UtilsResult};
 
 /// Placeholder for the Http client
 #[derive(Debug)]
@@ -15,7 +15,7 @@ pub struct HttpClient {
 
 impl HttpClient {
     /// Returns a new instance for the http client
-    pub async fn new<A>(api_key: A) -> Result<Self>
+    pub async fn new<A>(api_key: A) -> UtilsResult<Self>
     where
         A: AsRef<str>,
     {
@@ -45,7 +45,12 @@ impl HttpClient {
     }
 
     /// Makes the http request
-    pub async fn request<B, R>(&self, method: Method, ep: EndPoint, body: &B) -> Result<Response<R>>
+    pub async fn request<B, R>(
+        &self,
+        method: Method,
+        ep: EndPoint,
+        body: &B,
+    ) -> UtilsResult<Response<R>>
     where
         B: Serialize + ?Sized,
         R: DeserializeOwned + std::fmt::Debug,
@@ -72,9 +77,9 @@ impl HttpClient {
 
         if req_res.status()
             == StatusCode::from_u16(403)
-                .map_err(|_e| Error::InvalidStatusCode(req_res.status().as_u16()))?
+                .map_err(|_e| UtilsError::InvalidStatusCode(req_res.status().as_u16()))?
         {
-            return Err(Error::RateLimitExceeded);
+            return Err(UtilsError::RateLimitExceeded);
         }
 
         let res: Response<R> = req_res.json().await.map_err(|e| {
@@ -84,7 +89,7 @@ impl HttpClient {
 
         if !res.status {
             error!("{method} request to {ep} failed: {}", res.message);
-            return Err(Error::FailedRequest(res.message));
+            return Err(UtilsError::FailedRequest(res.message));
         }
 
         debug!("{method} request to {ep} completed");
@@ -92,7 +97,7 @@ impl HttpClient {
         Ok(res)
     }
     /// Makes the get request
-    pub async fn get_json_url<U, R>(url: U) -> Result<R>
+    pub async fn get_json_url<U, R>(url: U) -> UtilsResult<R>
     where
         U: IntoUrl,
         R: DeserializeOwned + std::fmt::Debug,
@@ -102,7 +107,7 @@ impl HttpClient {
     }
 
     /// Makes the get request
-    pub async fn get<B, R>(&self, ep: EndPoint, body: &B) -> Result<Response<R>>
+    pub async fn get<B, R>(&self, ep: EndPoint, body: &B) -> UtilsResult<Response<R>>
     where
         B: Serialize + ?Sized,
         R: DeserializeOwned + std::fmt::Debug,
@@ -111,7 +116,7 @@ impl HttpClient {
     }
 
     /// Makes the post request
-    pub async fn post<B, R>(&self, ep: EndPoint, body: &B) -> Result<Response<R>>
+    pub async fn post<B, R>(&self, ep: EndPoint, body: &B) -> UtilsResult<Response<R>>
     where
         B: Serialize + ?Sized,
         R: DeserializeOwned + std::fmt::Debug,

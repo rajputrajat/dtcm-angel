@@ -1,9 +1,9 @@
 use totp_rs::{Algorithm, Secret, TOTP};
 
-use crate::Result;
+use crate::UtilsResult;
 
 /// Generates the current OTP
-pub fn otp<O>(otp_token: O) -> Result<String>
+pub fn otp<O>(otp_token: O) -> UtilsResult<String>
 where
     O: Into<String>,
 {

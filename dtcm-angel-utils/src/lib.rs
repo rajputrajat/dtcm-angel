@@ -98,4 +98,4 @@ pub enum UtilsError {
 }
 
 /// custom result type for crate
-pub type Result<T> = std::result::Result<T, UtilsError>;
+pub type UtilsResult<T> = std::result::Result<T, UtilsError>;

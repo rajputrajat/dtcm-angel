@@ -1,11 +1,11 @@
 use std::net::{AddrParseError, IpAddr};
 use tokio::process::Command;
 
-use crate::Result;
+use crate::UtilsResult;
 
 /// Returns the public ip address
 /// Error: multiple cases
-pub async fn public_ip() -> Result<IpAddr> {
+pub async fn public_ip() -> UtilsResult<IpAddr> {
     String::from_utf8(
         Command::new("curl")
             .arg("ifconfig.me/ip")

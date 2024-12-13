@@ -1,6 +1,6 @@
 use dtcm_angel_utils::{
     http::{EndPoint, HttpClient},
-    Result,
+    UtilsResult,
 };
 
 use super::OrderBook;
@@ -18,7 +18,7 @@ pub struct IndividualOrderStatus {
 
 impl IndividualOrderStatus {
     /// Fetches the order status for the given order ID
-    pub async fn fetch_data<O>(http: &HttpClient, unique_order_id: O) -> Result<Self>
+    pub async fn fetch_data<O>(http: &HttpClient, unique_order_id: O) -> UtilsResult<Self>
     where
         O: Into<String>,
     {

@@ -3,7 +3,7 @@ use std::fmt::Display;
 
 use crate::{
     sys::{local_ip, mac_addr, public_ip},
-    Result,
+    UtilsResult,
 };
 
 /// Http headers to be sent to the API
@@ -11,7 +11,7 @@ pub struct HttpHeader(HeaderMap);
 
 impl HttpHeader {
     /// Returns a new instance for the http headers
-    pub async fn new<A, J>(api_key: A, jwt_token: Option<J>) -> Result<Self>
+    pub async fn new<A, J>(api_key: A, jwt_token: Option<J>) -> UtilsResult<Self>
     where
         A: AsRef<str>,
         J: Display,

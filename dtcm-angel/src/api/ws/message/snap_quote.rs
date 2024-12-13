@@ -1,7 +1,7 @@
 use std::io::Cursor;
 
 use byteorder::{ReadBytesExt, LE};
-use dtcm_angel_utils::UtilsError as Error;
+use dtcm_angel_utils::UtilsError;
 
 use super::{best_five_data::Flag, BestFiveData};
 
@@ -27,7 +27,7 @@ pub struct SnapQuote {
 }
 
 impl TryFrom<&mut Cursor<&[u8]>> for SnapQuote {
-    type Error = Error;
+    type Error = UtilsError;
 
     fn try_from(rdr: &mut Cursor<&[u8]>) -> Result<Self, Self::Error> {
         let last_traded_timestamp = rdr.read_i64::<LE>()?;

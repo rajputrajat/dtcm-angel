@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use serde::de::DeserializeOwned;
 
-use crate::Result;
+use crate::UtilsResult;
 
 use super::Response;
 
@@ -19,7 +19,7 @@ pub trait Api {
 #[async_trait]
 pub trait HttpFetcher: Api {
     /// Returns the fetched response with data
-    async fn fetch<B>(http: &super::HttpClient, body: B) -> Result<super::Response<Self>>
+    async fn fetch<B>(http: &super::HttpClient, body: B) -> UtilsResult<super::Response<Self>>
     where
         B: serde::Serialize + Send + Sync,
         Self: DeserializeOwned + std::fmt::Debug,
@@ -28,7 +28,7 @@ pub trait HttpFetcher: Api {
     }
 
     /// Returns the fetched data
-    async fn fetch_data<B>(http: &super::HttpClient, body: B) -> Result<Self>
+    async fn fetch_data<B>(http: &super::HttpClient, body: B) -> UtilsResult<Self>
     where
         B: serde::Serialize + Send + Sync,
         Self: DeserializeOwned + std::fmt::Debug,
@@ -37,7 +37,7 @@ pub trait HttpFetcher: Api {
     }
 
     /// Returns the fetched vector of data
-    async fn fetch_vec<B>(http: &super::HttpClient, body: B) -> Result<Vec<Self>>
+    async fn fetch_vec<B>(http: &super::HttpClient, body: B) -> UtilsResult<Vec<Self>>
     where
         B: serde::Serialize + Send + Sync,
         Self: DeserializeOwned + std::fmt::Debug,
@@ -53,7 +53,7 @@ pub trait HttpFetcher: Api {
 #[async_trait]
 pub trait HttpSender: Api {
     /// Sends the data in body to the API and returns the Response
-    async fn send<R>(&self, http: &super::HttpClient) -> Result<super::Response<R>>
+    async fn send<R>(&self, http: &super::HttpClient) -> UtilsResult<super::Response<R>>
     where
         R: DeserializeOwned + std::fmt::Debug,
         Self: serde::Serialize + std::fmt::Debug,
@@ -62,7 +62,7 @@ pub trait HttpSender: Api {
     }
 
     /// Sends the data in body to the API and returns the received data
-    async fn send_data<R>(&self, http: &super::HttpClient) -> Result<R>
+    async fn send_data<R>(&self, http: &super::HttpClient) -> UtilsResult<R>
     where
         R: DeserializeOwned + std::fmt::Debug,
         Self: serde::Serialize + std::fmt::Debug,
@@ -71,7 +71,7 @@ pub trait HttpSender: Api {
     }
 
     /// Sends the data in body to the API and returns the received vector
-    async fn send_vec<R>(&self, http: &super::HttpClient) -> Result<Vec<R>>
+    async fn send_vec<R>(&self, http: &super::HttpClient) -> UtilsResult<Vec<R>>
     where
         R: DeserializeOwned + std::fmt::Debug,
         Self: serde::Serialize + std::fmt::Debug,
