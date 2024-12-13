@@ -15,7 +15,7 @@ extern crate log;
 extern crate serde;
 
 use mac_address::MacAddressError;
-use std::{io, net::AddrParseError, string::FromUtf8Error, time::SystemTimeError};
+use std::{io, net::AddrParseError, str::Utf8Error, string::FromUtf8Error, time::SystemTimeError};
 use thiserror::Error as ThisError;
 use tokio_tungstenite::tungstenite::http::header::InvalidHeaderValue;
 use totp_rs::{SecretParseError, TotpUrlError};
@@ -56,6 +56,9 @@ pub enum UtilsError {
     /// text parsing failed
     #[error(transparent)]
     Utf8ParsingFailed(#[from] FromUtf8Error),
+    /// text parsing failed
+    #[error(transparent)]
+    Utf8Error(#[from] Utf8Error),
     /// missing data in the api response
     #[error("missing data in API response")]
     MissingData,
