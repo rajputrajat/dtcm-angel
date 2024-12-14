@@ -32,6 +32,9 @@ pub mod ws;
 /// the Error type from utils
 #[derive(Debug, ThisError)]
 pub enum UtilsError {
+    /// lib-error
+    #[error("lib error: {0:?}")]
+    LibError(Box<dyn core::error::Error + Send>),
     /// chrono parser failed
     #[error(transparent)]
     ChronoParseError(#[from] chrono::ParseError),

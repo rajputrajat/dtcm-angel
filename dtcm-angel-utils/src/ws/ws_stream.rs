@@ -34,7 +34,7 @@ pub struct WsStream<M> {
 impl<M, E> WsStream<M>
 where
     M: TryFrom<Vec<u8>, Error = E> + DeserializeOwned,
-    E: core::error::Error,
+    E: core::error::Error + Send + 'static,
 {
     /// Connects to a [`WebSocket`] server.
     pub async fn connect(request: Request) -> UtilsResult<Self> {
@@ -93,7 +93,7 @@ where
         Some(M::try_from(payload).map_err(|e| {
             let msg = format!("Failed to decode websocket binary message  with error {e}",);
             error!("{msg}");
-            e.into()
+            UtilsError::LibError(Box::new(e))
         }))
     }
 
