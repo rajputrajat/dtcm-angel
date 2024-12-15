@@ -1,3 +1,5 @@
+use core::error::Error;
+
 use std::{
     marker::PhantomData,
     pin::Pin,
@@ -16,7 +18,7 @@ use tokio_tungstenite::{
     MaybeTlsStream,
 };
 
-use crate::{UtilsError, UtilsResult};
+type UtilsResult<T> = Result<T, Box<dyn Error>>;
 
 /// Type alias for WebSocketStream
 type WebSocket = tokio_tungstenite::WebSocketStream<MaybeTlsStream<TcpStream>>;
@@ -31,10 +33,9 @@ pub struct WsStream<M> {
     p: PhantomData<M>,
 }
 
-impl<M, E> WsStream<M>
+impl<M> WsStream<M>
 where
-    M: TryFrom<Vec<u8>, Error = E> + DeserializeOwned,
-    E: core::error::Error + Send + 'static,
+    M: TryFrom<Vec<u8>, Error = Box<dyn Error>> + DeserializeOwned,
 {
     /// Connects to a [`WebSocket`] server.
     pub async fn connect(request: Request) -> UtilsResult<Self> {
@@ -93,7 +94,7 @@ where
         Some(M::try_from(payload).map_err(|e| {
             let msg = format!("Failed to decode websocket binary message  with error {e}",);
             error!("{msg}");
-            UtilsError::LibError(Box::new(e))
+            e.into()
         }))
     }
 
@@ -113,7 +114,7 @@ where
     fn process_close_frame(close_frame: Option<CloseFrame>) -> Option<UtilsResult<M>> {
         let msg = format!("CloseFrame request from websocket {:?}", close_frame);
         trace!("{msg}");
-        Some(Err(UtilsError::TungsteniteCloseFrameError))
+        Some(Err(msg.into()))
     }
 
     /// Frame message from [`WebSocket`]. Event logged at `trace` level.
@@ -140,14 +141,14 @@ impl<M> Into<WebSocket> for WsStream<M> {
 
 impl<M> Stream for WsStream<M>
 where
-    M: TryFrom<Vec<u8>, Error = UtilsError> + DeserializeOwned,
+    M: TryFrom<Vec<u8>, Error = Box<dyn Error>> + DeserializeOwned,
 {
     type Item = UtilsResult<M>;
 
     fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
         loop {
             let input = match Pin::new(self.as_mut().project().inner).poll_next(cx) {
-                Poll::Ready(Some(input)) => input.map_err(|e| e.into()),
+                Poll::Ready(Some(input)) => input.map_err(Into::into),
                 Poll::Ready(None) => return Poll::Ready(None),
                 Poll::Pending => return Poll::Pending,
             };

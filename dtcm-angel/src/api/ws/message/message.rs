@@ -1,11 +1,9 @@
 use std::io::{Cursor, Read};
 
 use byteorder::{ReadBytesExt, LE};
-use dtcm_angel_utils::UtilsError;
 use serde::Deserialize;
 
 use crate::ws::{SubscriptionExchange, SubscriptionMode};
-use crate::Error;
 
 use super::{Quote, SnapQuote};
 
@@ -31,26 +29,24 @@ pub struct Message {
 }
 
 impl TryFrom<&[u8]> for Message {
-    type Error = Error;
+    type Error = Box<dyn core::error::Error>;
 
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         let mut rdr = Cursor::new(value);
 
-        let mode = SubscriptionMode::try_from(rdr.read_u8().map_err(|e| UtilsError::IoError(e))?)?;
-        let exchange = rdr.read_u8().map_err(|e| UtilsError::IoError(e))?;
+        let mode = SubscriptionMode::try_from(rdr.read_u8()?)?;
+        let exchange = rdr.read_u8()?;
 
         let mut token = [0u8; 25];
-        rdr.read_exact(&mut token)
-            .map_err(|e| UtilsError::IoError(e))?;
+        rdr.read_exact(&mut token)?;
 
-        let token = std::str::from_utf8(&token)
-            .map_err(|e| UtilsError::Utf8Error(e))?
+        let token = std::str::from_utf8(&token)?
             .trim_matches(char::from(0))
             .to_string();
 
-        let sequence_number = rdr.read_i64::<LE>().map_err(|e| UtilsError::IoError(e))?;
-        let exchange_timestamp = rdr.read_i64::<LE>().map_err(|e| UtilsError::IoError(e))?;
-        let last_traded_price = rdr.read_i64::<LE>().map_err(|e| UtilsError::IoError(e))?;
+        let sequence_number = rdr.read_i64::<LE>()?;
+        let exchange_timestamp = rdr.read_i64::<LE>()?;
+        let last_traded_price = rdr.read_i64::<LE>()?;
 
         let quote = match mode {
             SubscriptionMode::Ltp => None,
@@ -76,7 +72,7 @@ impl TryFrom<&[u8]> for Message {
 }
 
 impl TryFrom<Vec<u8>> for Message {
-    type Error = Error;
+    type Error = Box<dyn core::error::Error>;
 
     fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
         Self::try_from(value.as_ref())

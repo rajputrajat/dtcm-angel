@@ -9,3 +9,6 @@ pub use subscription::{
     SubscriptionAction, SubscriptionBuilder, SubscriptionExchange, SubscriptionMode,
     SubscriptionParam, SubscriptionRequest, SubscriptionToken,
 };
+
+mod ws_order_status;
+pub use ws_order_status::AngelOneWsOrderStatus;
