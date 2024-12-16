@@ -33,6 +33,7 @@ features = ["json", "gzip", "brotli", "deflate"]
 
 [dependencies.tokio-tungstenite]
 version = "0.21"
+features = ["native-tls"]
 
 [dependencies.futures-util]
 version = "0.3"

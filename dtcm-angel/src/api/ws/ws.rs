@@ -6,7 +6,7 @@ use serde::de::DeserializeOwned;
 type Result_<T> = Result<T, Box<dyn Error>>;
 
 // Angel One Websocket URL
-const ANGEL_WS_URL: &str = "ws://smartapisocket.angelone.in/smart-stream";
+const ANGEL_WS_URL: &str = "wss://smartapisocket.angelone.in/smart-stream";
 
 /// Placeholder containing angel one web socket configuration
 #[derive(Debug)]
