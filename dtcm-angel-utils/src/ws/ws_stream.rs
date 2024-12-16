@@ -81,11 +81,15 @@ where
     /// Text message from [`WebSocket`]. Event logged at `trace` level.
     fn process_text(payload: String) -> Option<UtilsResult<M>> {
         trace!("Received text payload {payload}");
-        Some(serde_json::from_str(&payload).map_err(|e| {
-            let msg = format!("Failed to decode websocket text message with error {e}");
-            error!("{msg}");
-            e.into()
-        }))
+        if &payload == "pong" {
+            Some(Err("pong received".into()))
+        } else {
+            Some(serde_json::from_str(&payload).map_err(|e| {
+                let msg = format!("Failed to decode websocket text message with error {e}");
+                error!("{msg}");
+                e.into()
+            }))
+        }
     }
 
     /// Binary message from [`WebSocket`]. Event logged at `trace` level.

@@ -1,6 +1,8 @@
 use dtcm_angel_utils::ws::{IntoClientRequest, Request, WsStream};
 use serde::de::DeserializeOwned;
 
+use crate::order::OrderBook;
+
 type Error = Box<dyn core::error::Error>;
 
 // Angel One Websocket URL
@@ -13,18 +15,22 @@ pub struct AngelOneWsOrderStatus {
     pub client_code: String,
     /// Feed token
     pub feed_token: String,
+    /// auth token
+    pub auth_token: String,
 }
 
 impl AngelOneWsOrderStatus {
     /// Returns a  new instance for the websocket
-    pub fn new<C, F>(client_code: C, feed_token: F) -> Self
+    pub fn new<C, F, A>(client_code: C, feed_token: F, auth_token: A) -> Self
     where
         C: Into<String>,
         F: Into<String>,
+        A: Into<String>,
     {
         Self {
             client_code: client_code.into(),
             feed_token: feed_token.into(),
+            auth_token: auth_token.into(),
         }
     }
 
@@ -39,6 +45,11 @@ impl AngelOneWsOrderStatus {
         let feed_token = self.feed_token.parse()?;
         headers.insert("x-feed-token", feed_token);
 
+        headers.insert(
+            "Authorization",
+            format!("Bearer {}", self.auth_token).parse()?,
+        );
+
         Ok(request)
     }
 
@@ -48,5 +59,37 @@ impl AngelOneWsOrderStatus {
         M: TryFrom<Vec<u8>, Error = Error> + DeserializeOwned,
     {
         Ok(WsStream::connect(self.request()?).await?)
+    }
+}
+
+#[allow(missing_docs)]
+#[derive(Debug, Deserialize)]
+pub struct OrderStatus {
+    #[serde(rename = "user-id")]
+    pub user_id: String,
+    #[serde(rename = "status-code")]
+    pub status_code: String,
+    #[serde(rename = "order-status")]
+    pub order_status: String,
+    #[serde(rename = "error-message")]
+    pub error_message: String,
+    #[serde(rename = "orderData")]
+    pub order_data: OrderBook,
+}
+
+impl TryFrom<&[u8]> for OrderStatus {
+    type Error = Box<dyn core::error::Error>;
+
+    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
+        let ob: Self = serde_json::from_slice(value)?;
+        Ok(ob)
+    }
+}
+
+impl TryFrom<Vec<u8>> for OrderStatus {
+    type Error = Box<dyn core::error::Error>;
+
+    fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
+        Self::try_from(value.as_ref())
     }
 }

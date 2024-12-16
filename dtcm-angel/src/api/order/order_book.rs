@@ -1,3 +1,5 @@
+use serde::Deserialize;
+
 use crate::types::{
     DurationType, ExchangeType, OrderType, OrderVariety, ProductType, TransactionType,
 };
@@ -7,12 +9,14 @@ use crate::types::{
 #[derive(Debug, Deserialize)]
 #[api(GET, OrderBook)]
 pub struct OrderBook {
-    pub variety: OrderVariety,
-    #[serde(rename = "ordertype")]
-    pub order_type: OrderType,
-    #[serde(rename = "producttype")]
-    pub product_type: ProductType,
-    pub duration: DurationType,
+    #[serde(deserialize_with = "deserialize_empty")]
+    pub variety: Option<OrderVariety>,
+    #[serde(rename = "ordertype", deserialize_with = "deserialize_empty")]
+    pub order_type: Option<OrderType>,
+    #[serde(rename = "producttype", deserialize_with = "deserialize_empty")]
+    pub product_type: Option<ProductType>,
+    #[serde(deserialize_with = "deserialize_empty")]
+    pub duration: Option<DurationType>,
     pub price: f64,
     #[serde(rename = "triggerprice")]
     pub trigger_price: f64,
@@ -27,9 +31,10 @@ pub struct OrderBook {
     pub trailing_stop_loss: f64,
     #[serde(rename = "tradingsymbol")]
     pub trading_symbol: String,
-    #[serde(rename = "transactiontype")]
-    pub transaction_type: TransactionType,
-    pub exchange: ExchangeType,
+    #[serde(rename = "transactiontype", deserialize_with = "deserialize_empty")]
+    pub transaction_type: Option<TransactionType>,
+    #[serde(deserialize_with = "deserialize_empty")]
+    pub exchange: Option<ExchangeType>,
     #[serde(rename = "symboltoken")]
     pub symbol_token: String,
     #[serde(rename = "ordertag")]
@@ -72,4 +77,18 @@ pub struct OrderBook {
     pub fill_time: String,
     #[serde(rename = "parentorderid")]
     pub parent_order_id: String,
+}
+
+fn deserialize_empty<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+    T: serde::de::DeserializeOwned,
+{
+    let s = String::deserialize(deserializer)?;
+    if s.is_empty() {
+        Ok(None) // Treat empty string as None
+    } else {
+        let out = serde_json::from_str(&s).unwrap();
+        Ok(Some(out))
+    }
 }

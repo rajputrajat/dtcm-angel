@@ -52,5 +52,5 @@ version = "0.15"
 [dev-dependencies.env_logger]
 version = "0.10"
 
-[dev-dependencies.serde_json]
+[dependencies.serde_json]
 version = "1"
