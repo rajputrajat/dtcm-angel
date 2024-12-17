@@ -34,7 +34,7 @@ pub mod ws;
 pub enum UtilsError {
     /// lib-error
     #[error("lib error: {0:?}")]
-    LibError(Box<dyn core::error::Error + Send>),
+    LibError(Box<dyn core::error::Error + Send + Sync>),
     /// chrono parser failed
     #[error(transparent)]
     ChronoParseError(#[from] chrono::ParseError),

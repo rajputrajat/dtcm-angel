@@ -1,9 +1,8 @@
-use core::error::Error;
-
 use dtcm_angel_utils::ws::{IntoClientRequest, Request, WsStream};
 use serde::de::DeserializeOwned;
 
-type Result_<T> = Result<T, Box<dyn Error>>;
+type Error = Box<dyn core::error::Error + Send + Sync>;
+type Result_<T> = Result<T, Error>;
 
 // Angel One Websocket URL
 const ANGEL_WS_URL: &str = "wss://smartapisocket.angelone.in/smart-stream";
@@ -47,7 +46,7 @@ impl AngelOneWs {
     /// Returns the websocket stream
     pub async fn stream<M>(&self) -> Result_<WsStream<M>>
     where
-        M: TryFrom<Vec<u8>, Error = Box<dyn core::error::Error>> + DeserializeOwned,
+        M: TryFrom<Vec<u8>, Error = Error> + DeserializeOwned,
     {
         Ok(WsStream::connect(self.request()?).await?)
     }

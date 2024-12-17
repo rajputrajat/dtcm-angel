@@ -3,7 +3,7 @@ use serde::de::DeserializeOwned;
 
 use crate::order::OrderBook;
 
-type Error = Box<dyn core::error::Error>;
+type Error = Box<dyn core::error::Error + Send + Sync>;
 
 // Angel One Websocket URL
 const ANGEL_WS_ORDER_STATUS_URL: &str = "wss://tns.angelone.in/smart-order-update";
@@ -78,7 +78,7 @@ pub struct OrderStatus {
 }
 
 impl TryFrom<&[u8]> for OrderStatus {
-    type Error = Box<dyn core::error::Error>;
+    type Error = Error;
 
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         let ob: Self = serde_json::from_slice(value)?;
@@ -87,7 +87,7 @@ impl TryFrom<&[u8]> for OrderStatus {
 }
 
 impl TryFrom<Vec<u8>> for OrderStatus {
-    type Error = Box<dyn core::error::Error>;
+    type Error = Error;
 
     fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
         Self::try_from(value.as_ref())

@@ -7,6 +7,8 @@ use crate::ws::{SubscriptionExchange, SubscriptionMode};
 
 use super::{Quote, SnapQuote};
 
+type Error = Box<dyn core::error::Error + Send + Sync>;
+
 /// Data response received from websocket server as binary message
 #[derive(Debug, Deserialize)]
 pub struct Message {
@@ -29,7 +31,7 @@ pub struct Message {
 }
 
 impl TryFrom<&[u8]> for Message {
-    type Error = Box<dyn core::error::Error>;
+    type Error = Error;
 
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         let mut rdr = Cursor::new(value);
@@ -72,7 +74,7 @@ impl TryFrom<&[u8]> for Message {
 }
 
 impl TryFrom<Vec<u8>> for Message {
-    type Error = Box<dyn core::error::Error>;
+    type Error = Error;
 
     fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
         Self::try_from(value.as_ref())

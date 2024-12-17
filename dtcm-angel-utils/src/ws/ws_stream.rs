@@ -1,5 +1,3 @@
-use core::error::Error;
-
 use std::{
     marker::PhantomData,
     pin::Pin,
@@ -18,7 +16,8 @@ use tokio_tungstenite::{
     MaybeTlsStream,
 };
 
-type UtilsResult<T> = Result<T, Box<dyn Error>>;
+type Error = Box<dyn core::error::Error + Send + Sync>;
+type UtilsResult<T> = Result<T, Error>;
 
 /// Type alias for WebSocketStream
 type WebSocket = tokio_tungstenite::WebSocketStream<MaybeTlsStream<TcpStream>>;
@@ -35,7 +34,7 @@ pub struct WsStream<M> {
 
 impl<M> WsStream<M>
 where
-    M: TryFrom<Vec<u8>, Error = Box<dyn Error>> + DeserializeOwned,
+    M: TryFrom<Vec<u8>, Error = Error> + DeserializeOwned,
 {
     /// Connects to a [`WebSocket`] server.
     pub async fn connect(request: Request) -> UtilsResult<Self> {
@@ -145,7 +144,7 @@ impl<M> Into<WebSocket> for WsStream<M> {
 
 impl<M> Stream for WsStream<M>
 where
-    M: TryFrom<Vec<u8>, Error = Box<dyn Error>> + DeserializeOwned,
+    M: TryFrom<Vec<u8>, Error = Error> + DeserializeOwned,
 {
     type Item = UtilsResult<M>;
 
