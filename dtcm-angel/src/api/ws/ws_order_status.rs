@@ -78,6 +78,7 @@ pub struct OrderStatus {
     pub order_data: OrderBook,
 }
 
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum StatusEn {
     AfterSuccessfulConnection,
@@ -119,6 +120,7 @@ impl<'de> Deserialize<'de> for StatusEn {
     }
 }
 
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ErrorCode {
     AuthorizationTokenInvalid,

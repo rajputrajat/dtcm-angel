@@ -11,4 +11,7 @@ pub use subscription::{
 };
 
 mod ws_order_status;
-pub use ws_order_status::{AngelOneWsOrderStatus, OrderStatus};
+pub use ws_order_status::{
+    AngelOneWsOrderStatus, ErrorCode as AngelOneWsOrderStatusErrorCode, OrderStatus,
+    StatusEn as AngelOneWsOrderStatusEn,
+};
