@@ -1,5 +1,6 @@
 use dtcm_angel_utils::ws::{IntoClientRequest, Request, WsStream};
-use serde::de::DeserializeOwned;
+use http_serde::http::StatusCode;
+use serde::{de::DeserializeOwned, Deserialize, Deserializer};
 
 use crate::order::OrderBook;
 
@@ -67,14 +68,78 @@ impl AngelOneWsOrderStatus {
 pub struct OrderStatus {
     #[serde(rename = "user-id")]
     pub user_id: String,
-    #[serde(rename = "status-code")]
-    pub status_code: String,
+    #[serde(rename = "status-code", with = "http_serde::status_code")]
+    pub status_code: StatusCode,
     #[serde(rename = "order-status")]
-    pub order_status: String,
+    pub order_status: StatusEn,
     #[serde(rename = "error-message")]
-    pub error_message: String,
+    pub error_message: ErrorCode,
     #[serde(rename = "orderData")]
     pub order_data: OrderBook,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum StatusEn {
+    AfterSuccessfulConnection,
+    Open,
+    Cancelled,
+    Rejected,
+    Modified,
+    Complete,
+    AfterMarketOrderReqReceived,
+    CancelledAfterMarketOrder,
+    ModifyAfterMarketOrderReqReceived,
+    OpenPending,
+    TriggerPending,
+    ModifyPending,
+    Unknown(String),
+}
+
+impl<'de> Deserialize<'de> for StatusEn {
+    fn deserialize<D>(de: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let variant = String::deserialize(de)?;
+        Ok(match variant.as_str() {
+            "AB00" => Self::AfterSuccessfulConnection,
+            "AB01" => Self::Open,
+            "AB02" => Self::Cancelled,
+            "AB03" => Self::Rejected,
+            "AB04" => Self::Modified,
+            "AB05" => Self::Complete,
+            "AB06" => Self::AfterMarketOrderReqReceived,
+            "AB07" => Self::CancelledAfterMarketOrder,
+            "AB08" => Self::ModifyAfterMarketOrderReqReceived,
+            "AB09" => Self::OpenPending,
+            "AB10" => Self::TriggerPending,
+            "AB11" => Self::ModifyPending,
+            _other => Self::Unknown(variant),
+        })
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ErrorCode {
+    AuthorizationTokenInvalid,
+    AuthorizationTokenExpired,
+    ConnectionLimitBreached,
+    Unknown(String),
+}
+
+impl<'de> Deserialize<'de> for ErrorCode {
+    fn deserialize<D>(de: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let variant = String::deserialize(de)?;
+        Ok(match variant.as_str() {
+            "401" => Self::AuthorizationTokenInvalid,
+            "403" => Self::AuthorizationTokenExpired,
+            "429" => Self::ConnectionLimitBreached,
+            _other => Self::Unknown(variant),
+        })
+    }
 }
 
 impl TryFrom<&[u8]> for OrderStatus {
@@ -91,5 +156,38 @@ impl TryFrom<Vec<u8>> for OrderStatus {
 
     fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
         Self::try_from(value.as_ref())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_error_code_deser() {
+        assert_eq!(
+            ErrorCode::AuthorizationTokenInvalid,
+            serde_json::from_str(r#""401""#).unwrap()
+        );
+        assert_eq!(
+            ErrorCode::Unknown(String::from("420")),
+            serde_json::from_str(r#""420""#).unwrap()
+        );
+    }
+
+    #[test]
+    fn test_status_code_deser() {
+        assert_eq!(
+            StatusEn::AfterSuccessfulConnection,
+            serde_json::from_str(r#""AB00""#).unwrap()
+        );
+        assert_eq!(
+            StatusEn::ModifyPending,
+            serde_json::from_str(r#""AB11""#).unwrap()
+        );
+        assert_eq!(
+            StatusEn::Unknown("AB12".to_string()),
+            serde_json::from_str(r#""AB12""#).unwrap()
+        );
     }
 }

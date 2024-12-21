@@ -22,9 +22,6 @@ pub use api::{funds, gtt, market, order, portfolio, user, ws};
 /// Various types for Angel One API SDK
 pub mod types;
 
-#[cfg(test)]
-pub mod test_util;
-
 /// the Error type from utils
 #[derive(Debug, ThisError)]
 pub enum Error {
