@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use dtcm_angel_utils::ws::{IntoClientRequest, Request, WsStream};
 use http_serde::http::StatusCode;
 use serde::{de::DeserializeOwned, Deserialize, Deserializer};
@@ -87,8 +89,8 @@ impl<'de> Deserialize<'de> for StatusCode_ {
     where
         D: Deserializer<'de>,
     {
-        let code = u16::deserialize(de)?;
-        let status_code = StatusCode::from_u16(code).map_err(serde::de::Error::custom)?;
+        let code = String::deserialize(de)?;
+        let status_code = StatusCode::from_str(&code).map_err(serde::de::Error::custom)?;
         Ok(Self(status_code))
     }
 }
