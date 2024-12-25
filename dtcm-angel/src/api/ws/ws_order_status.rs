@@ -68,14 +68,29 @@ impl AngelOneWsOrderStatus {
 pub struct OrderStatus {
     #[serde(rename = "user-id")]
     pub user_id: String,
-    #[serde(rename = "status-code", with = "http_serde::status_code")]
-    pub status_code: StatusCode,
+    #[serde(rename = "status-code")]
+    pub status_code: StatusCode_,
     #[serde(rename = "order-status")]
     pub order_status: StatusEn,
     #[serde(rename = "error-message")]
     pub error_message: ErrorCode,
     #[serde(rename = "orderData")]
     pub order_data: OrderBook,
+}
+
+#[allow(missing_docs)]
+#[derive(Debug)]
+pub struct StatusCode_(pub StatusCode);
+
+impl<'de> Deserialize<'de> for StatusCode_ {
+    fn deserialize<D>(de: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let code = u16::deserialize(de)?;
+        let status_code = StatusCode::from_u16(code).map_err(serde::de::Error::custom)?;
+        Ok(Self(status_code))
+    }
 }
 
 #[allow(missing_docs)]
