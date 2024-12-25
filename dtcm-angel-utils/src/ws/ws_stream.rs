@@ -85,7 +85,7 @@ where
         } else {
             Some(serde_json::from_str(&payload).map_err(|e| {
                 let msg = format!("Failed to decode websocket text message with error {e}");
-                error!("{msg}");
+                error!("{msg}, {payload}");
                 e.into()
             }))
         }
