@@ -7,7 +7,7 @@ use crate::types::{
 
 /// Placeholder for the order book
 #[allow(missing_docs)]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Default, PartialEq)]
 #[api(GET, OrderBook)]
 pub struct OrderBook {
     #[serde(deserialize_with = "deserialize_empty")]
@@ -86,6 +86,7 @@ where
     T: serde::de::DeserializeOwned,
 {
     #[derive(Deserialize)]
+    #[serde(untagged)]
     enum PossibleEmptyString<'a, T> {
         Empty(&'a str),
         T(T),
@@ -99,4 +100,54 @@ where
             Err(serde::de::Error::custom("no"))
         }
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn test_parse_orderbook() {
+        let book: OrderBook = serde_json::from_str(EMPTY_BOOK).unwrap();
+        assert_eq!(book, OrderBook::default());
+    }
+
+    const EMPTY_BOOK: &str = r#"{
+          "variety": "",
+          "ordertype": "",
+          "ordertag": "",
+          "producttype": "",
+          "price": 0,
+          "triggerprice": 0,
+          "quantity": "",
+          "disclosedquantity": "",
+          "duration": "",
+          "squareoff": 0,
+          "stoploss": 0,
+          "trailingstoploss": 0,
+          "tradingsymbol": "",
+          "transactiontype": "",
+          "exchange": "",
+          "symboltoken": "",
+          "instrumenttype": "",
+          "strikeprice": 0,
+          "optiontype": "",
+          "expirydate": "",
+          "lotsize": "",
+          "cancelsize": "",
+          "averageprice": 0,
+          "filledshares": "",
+          "unfilledshares": "",
+          "orderid": "",
+          "text": "",
+          "status": "",
+          "orderstatus": "",
+          "updatetime": "",
+          "exchtime": "",
+          "exchorderupdatetime": "",
+          "fillid": "",
+          "filltime": "",
+          "parentorderid": ""
+     }"#;
 }

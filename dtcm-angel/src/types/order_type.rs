@@ -1,5 +1,5 @@
 /// Order type
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub enum OrderType {
     #[serde(rename = "MARKET")]
     /// Market Order(MKT)
