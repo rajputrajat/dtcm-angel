@@ -12,6 +12,8 @@ license = "MIT OR Apache-2.0"
 readme = "crates-io.md"
 rust-version = "1.74"
 
+[dependencies]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies.log]

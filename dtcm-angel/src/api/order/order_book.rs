@@ -85,15 +85,18 @@ where
     D: serde::Deserializer<'de>,
     T: serde::de::DeserializeOwned,
 {
-    let s = String::deserialize(deserializer)?;
-    if s.is_empty() {
-        Ok(None) // Treat empty string as None
-    } else {
-        let out = serde_json::from_str(&s)
-            .inspect_err(|_e| {
-                error!("could not parse: '{s}'");
-            })
-            .unwrap();
-        Ok(Some(out))
+    #[derive(Deserialize)]
+    enum PossibleEmptyString<'a, T> {
+        Empty(&'a str),
+        T(T),
+    }
+    let possibility = PossibleEmptyString::deserialize(deserializer)?;
+    match possibility {
+        PossibleEmptyString::T(t) => Ok(Some(t)),
+        PossibleEmptyString::Empty("") => Ok(None),
+        PossibleEmptyString::Empty(other) => {
+            error!("unhandled: '{other}'");
+            Err(serde::de::Error::custom("no"))
+        }
     }
 }
