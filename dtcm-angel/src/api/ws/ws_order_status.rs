@@ -143,6 +143,7 @@ pub enum ErrorCode {
     AuthorizationTokenInvalid,
     AuthorizationTokenExpired,
     ConnectionLimitBreached,
+    NoError,
     Unknown(String),
 }
 
@@ -153,6 +154,7 @@ impl<'de> Deserialize<'de> for ErrorCode {
     {
         let variant = String::deserialize(de)?;
         Ok(match variant.as_str() {
+            "" => Self::NoError,
             "401" => Self::AuthorizationTokenInvalid,
             "403" => Self::AuthorizationTokenExpired,
             "429" => Self::ConnectionLimitBreached,
@@ -192,6 +194,7 @@ mod tests {
             ErrorCode::Unknown(String::from("420")),
             serde_json::from_str(r#""420""#).unwrap()
         );
+        assert_eq!(ErrorCode::NoError, serde_json::from_str(r#""""#).unwrap());
     }
 
     #[test]

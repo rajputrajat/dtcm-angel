@@ -1,9 +1,4 @@
-use std::collections::HashMap;
-
-use dtcm_angel::{
-    types::{ExchangeType, MarketDataExchange},
-    SmartConnect,
-};
+use dtcm_angel::{types::MarketDataExchange, SmartConnect};
 
 #[tokio::main]
 async fn main() {
