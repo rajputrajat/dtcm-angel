@@ -1,5 +1,5 @@
 /// Transaction Types
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum TransactionType {
     #[serde(rename = "BUY")]
     /// Buy
@@ -7,10 +7,13 @@ pub enum TransactionType {
     #[serde(rename = "SELL")]
     /// Sell
     Sell,
+    #[serde(untagged)]
+    /// unhandled values
+    Unknown(String),
 }
 
 impl Default for TransactionType {
     fn default() -> Self {
-        Self::Buy
+        Self::Unknown(String::new())
     }
 }

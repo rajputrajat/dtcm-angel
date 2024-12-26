@@ -1,5 +1,5 @@
 /// Product type
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum ProductType {
     #[serde(rename = "DELIVERY")]
     /// Cash & Carry for equity (CNC)
@@ -16,10 +16,13 @@ pub enum ProductType {
     #[serde(rename = "BO")]
     /// Bracket Order (Only for ROBO)
     Bo,
+    #[serde(untagged)]
+    /// unhandled values
+    Unknown(String),
 }
 
 impl Default for ProductType {
     fn default() -> Self {
-        Self::Delivery
+        Self::Unknown(String::new())
     }
 }

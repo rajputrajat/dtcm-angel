@@ -7,10 +7,13 @@ pub enum DurationType {
     #[serde(rename = "IOC")]
     /// Immediate or Cancel
     Ioc,
+    #[serde(untagged)]
+    /// unhandled values
+    Unknown(String),
 }
 
 impl Default for DurationType {
     fn default() -> Self {
-        Self::Day
+        Self::Unknown(String::new())
     }
 }

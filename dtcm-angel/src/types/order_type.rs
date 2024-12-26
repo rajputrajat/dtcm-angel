@@ -13,10 +13,13 @@ pub enum OrderType {
     #[serde(rename = "STOPLOSS_MARKET")]
     /// Stop Loss Market Order(SL-M)
     StopLossMarket,
+    #[serde(untagged)]
+    /// unhandled values
+    Unknown(String),
 }
 
 impl Default for OrderType {
     fn default() -> Self {
-        Self::Market
+        Self::Unknown(String::new())
     }
 }

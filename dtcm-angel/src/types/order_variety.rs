@@ -13,10 +13,13 @@ pub enum OrderVariety {
     #[serde(rename = "ROBO")]
     /// ROBO (Bracket Order)
     Robo,
+    #[serde(untagged)]
+    /// unhandled values
+    Unknown(String),
 }
 
 impl Default for OrderVariety {
     fn default() -> Self {
-        Self::Normal
+        Self::Unknown(String::new())
     }
 }

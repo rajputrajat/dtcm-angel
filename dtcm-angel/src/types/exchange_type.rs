@@ -1,6 +1,5 @@
 /// Exchange Type
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Clone, Copy)]
-#[non_exhaustive]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Clone)]
 pub enum ExchangeType {
     /// BSE Equity
     BSE,
@@ -18,11 +17,14 @@ pub enum ExchangeType {
     NCDEX,
     /// not sure what NCO is, but it's part of instruments
     NCO,
+    #[serde(untagged)]
+    /// unhandled values
+    Unknown(String),
 }
 
 impl Default for ExchangeType {
     fn default() -> Self {
-        Self::NSE
+        Self::Unknown(String::new())
     }
 }
 
