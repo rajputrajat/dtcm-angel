@@ -1,3 +1,4 @@
+use log::error;
 use serde::Deserialize;
 
 use crate::types::{
@@ -88,7 +89,11 @@ where
     if s.is_empty() {
         Ok(None) // Treat empty string as None
     } else {
-        let out = serde_json::from_str(&s).unwrap();
+        let out = serde_json::from_str(&s)
+            .inspect_err(|_e| {
+                error!("could not parse: '{s}'");
+            })
+            .unwrap();
         Ok(Some(out))
     }
 }
