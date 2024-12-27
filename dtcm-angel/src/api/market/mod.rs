@@ -2,7 +2,10 @@ mod ltp_data;
 pub use ltp_data::{LtpDataReq, LtpDataRes};
 
 mod market_data;
-pub use market_data::{MarketDataReq, MarketDataRes};
+pub use market_data::{
+    FullData, MarketDataReq, MarketDataRes, MarketDataResInner, Ohlc, OrderDepth, OrderDepthInner,
+    UnFetchedRes,
+};
 
 mod candle_data;
 pub use candle_data::{CandleDataReq, CandleDataRes};
