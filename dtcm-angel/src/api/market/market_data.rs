@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use crate::types::{ExchangeType, MarketMode};
 
 /// Market data request
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 #[api(POST, MarketData)]
 pub struct MarketDataReq {
     /// Market data mode
