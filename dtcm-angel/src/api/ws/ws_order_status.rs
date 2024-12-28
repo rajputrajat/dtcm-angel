@@ -66,7 +66,7 @@ impl AngelOneWsOrderStatus {
 }
 
 #[allow(missing_docs)]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct OrderStatus {
     #[serde(rename = "user-id")]
     pub user_id: String,
@@ -81,7 +81,7 @@ pub struct OrderStatus {
 }
 
 #[allow(missing_docs)]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct StatusCode_(pub StatusCode);
 
 impl<'de> Deserialize<'de> for StatusCode_ {

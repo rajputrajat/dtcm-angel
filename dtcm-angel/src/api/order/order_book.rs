@@ -6,7 +6,7 @@ use crate::types::{
 
 /// Placeholder for the order book
 #[allow(missing_docs)]
-#[derive(Debug, Deserialize, Default, PartialEq)]
+#[derive(Debug, Deserialize, Default, PartialEq, Clone)]
 #[api(GET, OrderBook)]
 pub struct OrderBook {
     pub variety: OrderVariety,
