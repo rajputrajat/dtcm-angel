@@ -25,6 +25,9 @@ pub mod types;
 /// the Error type from utils
 #[derive(Debug, ThisError)]
 pub enum Error {
+    /// boxed error
+    #[error("boxed error")]
+    BoxedError(Box<dyn core::error::Error + Send + Sync>),
     /// errors from utils crate
     #[error(transparent)]
     UtilsError(#[from] dtcm_angel_utils::UtilsError),
