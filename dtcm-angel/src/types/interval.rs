@@ -3,7 +3,7 @@ use chrono::NaiveDateTime;
 use crate::Error;
 
 /// Interval
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Interval {
     /// 1 Minute
     #[serde(rename = "ONE_MINUTE")]
