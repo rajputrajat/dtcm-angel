@@ -15,7 +15,7 @@ pub struct PlaceOrderReq {
 }
 
 /// Place order response
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct PlaceOrderRes {
     /// Script name
     pub script: String,
