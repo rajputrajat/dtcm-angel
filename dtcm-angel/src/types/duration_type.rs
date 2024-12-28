@@ -1,5 +1,5 @@
 /// Duration type
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub enum DurationType {
     #[serde(rename = "DAY")]
     /// Regular Order

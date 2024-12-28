@@ -1,5 +1,5 @@
 /// Order Variety
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub enum OrderVariety {
     /// Normal Order (Regular)
     #[serde(rename = "NORMAL")]

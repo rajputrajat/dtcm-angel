@@ -3,7 +3,7 @@ use crate::types::TransactionType;
 use super::{OrderInner, OrderSetter};
 
 /// Place order request
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 #[api(POST, OrderPlace)]
 pub struct PlaceOrderReq {
     /// BUY or SELL

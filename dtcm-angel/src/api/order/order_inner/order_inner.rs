@@ -3,7 +3,7 @@ use crate::types::{DurationType, ExchangeType, OrderType, OrderVariety, ProductT
 use super::OrderSetter;
 
 #[allow(missing_docs)]
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct OrderInner {
     pub variety: OrderVariety,
     /// Trading Symbol of the instrument
