@@ -2,7 +2,7 @@ use crate::types::{ExchangeType, ProductType};
 
 /// Placeholder containing holding information
 #[allow(missing_docs)]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[api(GET, Holding)]
 pub struct Holding {
     #[serde(rename = "tradingsymbol")]
