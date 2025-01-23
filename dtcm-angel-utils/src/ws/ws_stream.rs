@@ -81,7 +81,8 @@ where
     fn process_text(payload: String) -> Option<UtilsResult<M>> {
         trace!("Received text payload {payload}");
         if &payload == "pong" {
-            Some(Err("pong received".into()))
+            trace!("pong received");
+            None
         } else {
             Some(serde_json::from_str(&payload).map_err(|e| {
                 let msg = format!("Failed to decode websocket text message with error {e}");
