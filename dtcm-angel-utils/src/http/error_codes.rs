@@ -2,10 +2,10 @@ use serde::{Deserialize, Deserializer, Serialize};
 use std::str::FromStr;
 use thiserror::Error as ThisError;
 
-#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone)]
 #[repr(u8)] // for error serial-numbers from codes api page
 /// error codes for smartapi
-pub enum ErrorCode {
+pub enum ErrorCode_ {
     /// #[strum(message = "InvalidToken")]
     AG8001 = 1,
     /// #[strum(message = "TokenExpired")]
@@ -66,6 +66,15 @@ pub enum ErrorCode {
     AB2002,
 }
 
+/// error codes for smartapi
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone)]
+pub enum ErrorCode {
+    /// code
+    Code(ErrorCode_),
+    /// err
+    Err(String),
+}
+
 /// the error
 #[derive(Debug, ThisError)]
 pub enum ErrorCodesError {
@@ -82,37 +91,37 @@ impl FromStr for ErrorCodeOpt {
     type Err = ErrorCodesError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "AG8001" => Ok(Self(Some(ErrorCode::AG8001))),
-            "AG8002" => Ok(Self(Some(ErrorCode::AG8002))),
-            "AG8003" => Ok(Self(Some(ErrorCode::AG8003))),
-            "AB8050" => Ok(Self(Some(ErrorCode::AB8050))),
-            "AB8051" => Ok(Self(Some(ErrorCode::AB8051))),
-            "AB1000" => Ok(Self(Some(ErrorCode::AB1000))),
-            "AB1001" => Ok(Self(Some(ErrorCode::AB1001))),
-            "AB1002" => Ok(Self(Some(ErrorCode::AB1002))),
-            "AB1003" => Ok(Self(Some(ErrorCode::AB1003))),
-            "AB1004" => Ok(Self(Some(ErrorCode::AB1004))),
-            "AB1005" => Ok(Self(Some(ErrorCode::AB1005))),
-            "AB1006" => Ok(Self(Some(ErrorCode::AB1006))),
-            "AB1007" => Ok(Self(Some(ErrorCode::AB1007))),
-            "AB1008" => Ok(Self(Some(ErrorCode::AB1008))),
-            "AB1009" => Ok(Self(Some(ErrorCode::AB1009))),
-            "AB1010" => Ok(Self(Some(ErrorCode::AB1010))),
-            "AB1011" => Ok(Self(Some(ErrorCode::AB1011))),
-            "AB1012" => Ok(Self(Some(ErrorCode::AB1012))),
-            "AB1013" => Ok(Self(Some(ErrorCode::AB1013))),
-            "AB1014" => Ok(Self(Some(ErrorCode::AB1014))),
-            "AB1015" => Ok(Self(Some(ErrorCode::AB1015))),
-            "AB1016" => Ok(Self(Some(ErrorCode::AB1016))),
-            "AB1017" => Ok(Self(Some(ErrorCode::AB1017))),
-            "AB1018" => Ok(Self(Some(ErrorCode::AB1018))),
-            "AB2000" => Ok(Self(Some(ErrorCode::AB2000))),
-            "AB2001" => Ok(Self(Some(ErrorCode::AB2001))),
-            "AB2002" => Ok(Self(Some(ErrorCode::AB2002))),
-            "AB1031" => Ok(Self(Some(ErrorCode::AB1031))),
-            "AB1032" => Ok(Self(Some(ErrorCode::AB1032))),
+            "AG8001" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AG8001)))),
+            "AG8002" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AG8002)))),
+            "AG8003" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AG8003)))),
+            "AB8050" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB8050)))),
+            "AB8051" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB8051)))),
+            "AB1000" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1000)))),
+            "AB1001" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1001)))),
+            "AB1002" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1002)))),
+            "AB1003" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1003)))),
+            "AB1004" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1004)))),
+            "AB1005" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1005)))),
+            "AB1006" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1006)))),
+            "AB1007" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1007)))),
+            "AB1008" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1008)))),
+            "AB1009" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1009)))),
+            "AB1010" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1010)))),
+            "AB1011" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1011)))),
+            "AB1012" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1012)))),
+            "AB1013" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1013)))),
+            "AB1014" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1014)))),
+            "AB1015" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1015)))),
+            "AB1016" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1016)))),
+            "AB1017" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1017)))),
+            "AB1018" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1018)))),
+            "AB2000" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB2000)))),
+            "AB2001" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB2001)))),
+            "AB2002" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB2002)))),
+            "AB1031" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1031)))),
+            "AB1032" => Ok(Self(Some(ErrorCode::Code(ErrorCode_::AB1032)))),
             "" => Ok(Self(None)),
-            e => Err(ErrorCodesError::InvalidErrorCode(e.to_owned())),
+            e => Ok(Self(Some(ErrorCode::Err(e.to_owned())))),
         }
     }
 }
