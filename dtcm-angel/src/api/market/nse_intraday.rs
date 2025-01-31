@@ -1,18 +1,9 @@
 use crate::types::ExchangeType;
 
-/// nse, bse intraday scrips
-#[derive(Debug, Serialize)]
-#[api(POST, NseIntraday)]
-pub struct NseIntradayScripReq;
-
-/// nse, bse intraday scrips
-#[derive(Debug, Serialize)]
-#[api(POST, BseIntraday)]
-pub struct BseIntradayScripReq;
-
 /// Searched scrip
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "PascalCase")]
+#[api(GET, NseIntraday)]
 pub struct IntradayScrip {
     /// Exchange name
     pub exchange: ExchangeType,
@@ -21,7 +12,3 @@ pub struct IntradayScrip {
     /// multiplier
     pub multiplier: f64,
 }
-
-/// Searched scrip
-#[derive(Debug, Deserialize)]
-pub struct IntradayScripsRes(pub Vec<IntradayScrip>);

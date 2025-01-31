@@ -9,9 +9,8 @@ use crate::{
         RuleDetailReq, RuleDetailRes, RuleListReq, RuleListRes,
     },
     market::{
-        BrokerageReq, BrokerageResp, BseIntradayScripReq, CandleDataReq, CandleDataRes, Instrument,
-        IntradayScripsRes, LtpDataReq, LtpDataRes, MarketDataReq, MarketDataRes,
-        NseIntradayScripReq, SearchScripReq, SearchScripRes,
+        BrokerageReq, BrokerageResp, CandleDataReq, CandleDataRes, Instrument, IntradayScrip,
+        LtpDataReq, LtpDataRes, MarketDataReq, MarketDataRes, SearchScripReq, SearchScripRes,
     },
     order::{
         CancelOrderReq, CancelOrderRes, IndividualOrderStatus, ModifyOrderReq, ModifyOrderRes,
@@ -364,15 +363,8 @@ where {
     }
 
     /// Nse intraday scrips
-    pub async fn nse_intraday_scrips(&self) -> Result<IntradayScripsRes> {
-        let req = NseIntradayScripReq;
-        Ok(req.send_data(&self.http).await?)
-    }
-
-    /// Bse intraday scrips
-    pub async fn bse_intraday_scrips(&self) -> Result<IntradayScripsRes> {
-        let req = BseIntradayScripReq;
-        Ok(req.send_data(&self.http).await?)
+    pub async fn nse_intraday_scrips(&self) -> Result<Vec<IntradayScrip>> {
+        Ok(IntradayScrip::fetch_vec(&self.http, &{}).await?)
     }
 
     /// Returns a new margin position to calculate the margin
