@@ -1,5 +1,5 @@
 /// Market mode
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
 pub enum MarketMode {
     /// Full data
     #[serde(rename = "FULL")]
