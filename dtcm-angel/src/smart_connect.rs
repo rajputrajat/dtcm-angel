@@ -1,5 +1,5 @@
 use dtcm_angel_utils::http::{HttpClient, HttpFetcher, HttpSender, INSTRUMENT_URL};
-use log::error;
+use log::{debug, error};
 use std::{collections::HashMap, fmt::Display};
 
 use crate::{
@@ -124,8 +124,12 @@ impl SmartConnect {
         let logout_req = LogoutReq::new(&self.client_code);
         match logout_req.send_data(&self.http).await {
             Ok(()) => (),
-            Err(e) if e.to_string().contains("Logout Successfully") => (),
-            Err(e) => return Err(Error::UtilsError(e)),
+            Err(e) => {
+                debug!("{e:?}");
+                if !e.to_string().contains("Logout Successfully") {
+                    return Err(Error::UtilsError(e));
+                }
+            }
         };
         self.session.take();
         self.user.take();
