@@ -125,8 +125,9 @@ impl SmartConnect {
         match logout_req.send_data(&self.http).await {
             Ok(()) => (),
             Err(e) => {
-                debug!("{e:?}");
-                if !e.to_string().contains("Logout Successfully") {
+                let estr = e.to_string();
+                debug!("'{estr}', '{e:?}'");
+                if !estr.contains("Logout Successfully") {
                     return Err(Error::UtilsError(e));
                 }
             }
