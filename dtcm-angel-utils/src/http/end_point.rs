@@ -3,14 +3,14 @@ use std::fmt::Display;
 use self::EndPoint::*;
 
 // Root URL for API connect platform
-const ROOT_URL: &str = "https://apiconnect.angelbroking.com";
+const ROOT_URL: &str = "https://apiconnect.angelbroking.in";
 
 // Websocket URL
 const WS_URL: &str = "ws://smartapisocket.angelone.in/smart-stream";
 
 /// URL to download the instrument list
 pub const INSTRUMENT_URL: &str =
-    "https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json";
+    "https://margincalculator.angelbroking.in/OpenAPI_File/files/OpenAPIScripMaster.json";
 
 // Publisher login URL
 const PUBLISHER_LOGIN: &str = "https://smartapi.angelbroking.com/publisher-login";
