@@ -1,5 +1,5 @@
-use reqwest::{redirect::Policy, Client, ClientBuilder, IntoUrl, Method, StatusCode};
-use serde::{de::DeserializeOwned, Serialize};
+use reqwest::{Client, ClientBuilder, IntoUrl, Method, StatusCode, redirect::Policy};
+use serde::{Serialize, de::DeserializeOwned};
 
 use super::{EndPoint, HttpHeader, Response};
 use crate::{UtilsError, UtilsResult};
@@ -70,7 +70,7 @@ impl HttpClient {
         trace!("request: {request:?}");
 
         let req_res = request.send().await.map_err(|e| {
-            error!("{method} request to {ep} failed: {e}");
+            error!("{method} request to {ep} failed: {e:?}");
             e
         })?;
         trace!("response: {req_res:?}");
@@ -83,7 +83,7 @@ impl HttpClient {
         }
 
         let res: Response<R> = req_res.json().await.map_err(|e| {
-            error!("endpoint: {ep}, error: {e}");
+            error!("endpoint: {ep}, error: {e:?}");
             e
         })?;
 
