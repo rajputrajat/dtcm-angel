@@ -9,7 +9,7 @@ pub struct AllHoldings {
     pub holdings: Vec<Holding>,
     /// summary of your entire investments
     #[serde(rename = "totalholding")]
-    pub total_holding: TotalHolding,
+    pub total_holding: Option<TotalHolding>,
 }
 
 /// Provides a summary of your entire investments
