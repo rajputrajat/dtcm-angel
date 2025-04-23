@@ -16,7 +16,7 @@ pub struct MarketDataReq {
 }
 
 /// Provides real-time market data for specific symbols
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct MarketDataResInner {
     /// The exchange for the fetched data.
     pub exchange: String,
@@ -34,7 +34,7 @@ pub struct MarketDataResInner {
     pub data: Option<FullData>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Copy, Deserialize)]
 pub struct Ohlc {
     /// The opening price for the fetched symbol.
     pub open: f64,
@@ -46,14 +46,14 @@ pub struct Ohlc {
     pub close: f64,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Copy, Deserialize)]
 pub struct OrderDepthInner {
     pub price: f64,
     pub quantity: usize,
     pub orders: usize,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct OrderDepth {
     /// Array of buy depth objects.
     pub buy: Vec<OrderDepthInner>,
@@ -61,7 +61,7 @@ pub struct OrderDepth {
     pub sell: Vec<OrderDepthInner>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct FullData {
     ///	The quantity of the last trade executed for the fetched symbol.
     #[serde(rename = "lastTradeQty")]
@@ -107,7 +107,8 @@ pub struct FullData {
     pub week_52_low: f64,
     pub depth: OrderDepth,
 }
-#[derive(Debug, Deserialize)]
+
+#[derive(Debug, Clone, Deserialize)]
 pub struct UnFetchedRes {
     pub exchange: String,
     #[serde(rename = "symbolToken")]
@@ -118,7 +119,7 @@ pub struct UnFetchedRes {
 }
 
 /// Market data response
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct MarketDataRes {
     /// fetched market data
     pub fetched: Vec<MarketDataResInner>,
