@@ -6,8 +6,6 @@ use crate::types::{ExchangeType, ProductType, TransactionType};
 #[derive(Debug, Serialize)]
 #[api(POST, GttCreate)]
 pub struct CreateRuleReq {
-    /// Rule ID
-    // pub id: String,
     #[serde(rename = "tradingsymbol")]
     /// Trading symbol
     pub trading_symbol: String,
@@ -32,28 +30,23 @@ pub struct CreateRuleReq {
     /// Disclosed quantity
     #[serde(rename = "disclosedqty")]
     pub disclosed_qty: String,
-    // /// Time period
-    // #[serde(rename = "timeperiod")]
-    // pub time_period: String,
 }
 
 /// Create rule response
 #[derive(Debug, Deserialize)]
 pub struct CreateRuleRes {
     /// Rule ID
-    pub id: String,
+    pub id: u64,
 }
 
 impl CreateRuleReq {
     /// Returns a new instance for the [`CreateRuleReq`]
-    pub fn new<S, T>(/*id: I, */ trading_symbol: S, symbol_token: T) -> Self
+    pub fn new<S, T>(trading_symbol: S, symbol_token: T) -> Self
     where
-        //I: Into<String>,
         S: Into<String>,
         T: Into<String>,
     {
         Self {
-            // id: id.into(),
             trading_symbol: trading_symbol.into(),
             symbol_token: symbol_token.into(),
             exchange: Default::default(),
@@ -63,7 +56,6 @@ impl CreateRuleReq {
             qty: String::from("0"),
             trigger_price: String::from("0"),
             disclosed_qty: String::from("0"),
-            // time_period: String::from("0"),
         }
     }
 
@@ -117,13 +109,4 @@ impl CreateRuleReq {
         self.disclosed_qty = disclosed_qty.to_string();
         self
     }
-
-    // /// Sets the time_period value for the [`CreateRuleReq`]
-    // pub fn time_period<T>(mut self, time_period: T) -> Self
-    // where
-    //     T: Display,
-    // {
-    //     self.time_period = time_period.to_string();
-    //     self
-    // }
 }

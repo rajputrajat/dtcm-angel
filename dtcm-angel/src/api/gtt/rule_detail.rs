@@ -39,23 +39,20 @@ pub struct RuleDetailRes {
     #[serde(rename = "producttype")]
     pub product_type: String,
     /// Price
-    pub price: String,
+    pub price: f64,
     /// Quantity
-    pub qty: String,
+    pub qty: u32,
     /// Trigger price
     #[serde(rename = "triggerprice")]
-    pub trigger_price: String,
+    pub trigger_price: f64,
     /// Disclosed quantity
     #[serde(rename = "disclosedqty")]
-    pub disclosed_qty: String,
+    pub disclosed_qty: u32,
 }
 
 impl RuleDetailReq {
     /// Return a new instance for the [`RuleDetailReq`]
-    pub fn new<I>(id: I) -> Self
-    where
-        I: Into<String>,
-    {
-        Self { id: id.into() }
+    pub fn new(id: u64) -> Self {
+        Self { id: id.to_string() }
     }
 }

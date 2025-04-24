@@ -138,16 +138,12 @@ impl SmartConnect {
     }
 
     /// Returns a new create rule instance to be configured
-    pub fn new_create_rule<S, T>(
-        /*id: I, */ trading_symbol: S,
-        symbol_token: T,
-    ) -> CreateRuleReq
+    pub fn new_create_rule<S, T>(trading_symbol: S, symbol_token: T) -> CreateRuleReq
     where
-        //I: Into<String>,
         S: Into<String>,
         T: Into<String>,
     {
-        CreateRuleReq::new(/*id, */ trading_symbol, symbol_token)
+        CreateRuleReq::new(trading_symbol, symbol_token)
     }
 
     /// Sends the create rule request
@@ -184,11 +180,7 @@ impl SmartConnect {
     }
 
     /// Returns a new detail rule instance to be configured
-    pub fn new_rule_detail<I, T>(id: I) -> RuleDetailReq
-    where
-        I: Into<String>,
-        T: Into<String>,
-    {
+    pub fn new_rule_detail(id: u64) -> RuleDetailReq {
         RuleDetailReq::new(id)
     }
 
