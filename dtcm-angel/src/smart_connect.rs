@@ -3,6 +3,7 @@ use log::{debug, error};
 use std::{collections::HashMap, fmt::Display};
 
 use crate::{
+    Error, Result,
     funds::{MarginCalculatorPosition, MarginCalculatorReq, MarginCalculatorRes, Rms},
     gtt::{
         CancelRuleReq, CancelRuleRes, CreateRuleReq, CreateRuleRes, ModifyRuleReq, ModifyRuleRes,
@@ -22,7 +23,6 @@ use crate::{
         RuleType, TransactionType,
     },
     user::{LogoutReq, Profile, SessionReq, SessionRes, TokenReq},
-    Error, Result,
 };
 
 /// Smart connect client to interact with Angel One API
@@ -138,13 +138,16 @@ impl SmartConnect {
     }
 
     /// Returns a new create rule instance to be configured
-    pub fn new_create_rule<I, S, T>(id: I, trading_symbol: S, symbol_token: T) -> CreateRuleReq
+    pub fn new_create_rule<S, T>(
+        /*id: I, */ trading_symbol: S,
+        symbol_token: T,
+    ) -> CreateRuleReq
     where
-        I: Into<String>,
+        //I: Into<String>,
         S: Into<String>,
         T: Into<String>,
     {
-        CreateRuleReq::new(id, trading_symbol, symbol_token)
+        CreateRuleReq::new(/*id, */ trading_symbol, symbol_token)
     }
 
     /// Sends the create rule request
