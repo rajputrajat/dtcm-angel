@@ -1,6 +1,9 @@
-use dtcm_angel_utils::http::{HttpClient, HttpFetcher, HttpSender, INSTRUMENT_URL};
-use log::{debug, error};
-use std::{collections::HashMap, fmt::Display};
+use dtcm_angel_utils::{
+    UtilsError,
+    http::{HttpClient, HttpFetcher, HttpSender, INSTRUMENT_URL},
+};
+use log::{debug, error, trace};
+use std::{collections::HashMap, error::Error as StdError, fmt::Display};
 
 use crate::{
     Error, Result,
@@ -364,7 +367,22 @@ where {
 
     /// Nse intraday scrips
     pub async fn nse_intraday_scrips(&self) -> Result<Vec<IntradayScrip>> {
-        Ok(IntradayScrip::fetch_vec(&self.http, &{}).await?)
+        Ok(match IntradayScrip::fetch_vec(&self.http, &{}).await {
+            Ok(scrips) => scrips,
+            Err(e) => {
+                if let UtilsError::ReqwestError(e) = &e {
+                    if let Some(err) = e.source() {
+                        let err = err.to_string();
+                        let erc = "invalid type: string \"\", expected a sequence";
+                        trace!("{err}");
+                        if err.contains(erc) {
+                            return Ok(vec![]);
+                        }
+                    }
+                }
+                return Err(e.into());
+            }
+        })
     }
 
     /// Returns a new margin position to calculate the margin
