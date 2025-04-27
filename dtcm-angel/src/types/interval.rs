@@ -8,6 +8,9 @@ pub enum Interval {
     /// 1 Minute
     #[serde(rename = "ONE_MINUTE")]
     _1m,
+    /// 2 Minute
+    #[serde(rename = "TWO_MINUTE")]
+    _2m,
     /// 3 Minute
     #[serde(rename = "THREE_MINUTE")]
     _3m,
@@ -35,7 +38,7 @@ impl Interval {
     /// Returns the limit on days to fetch the data from the API
     pub fn limit(&self) -> i64 {
         match self {
-            Self::_1m => 30,
+            Self::_1m | Self::_2m => 30,
             Self::_3m | Self::_5m | Self::_10m => 90,
             Self::_15m | Self::_30m => 180,
             Self::_1h => 365,
